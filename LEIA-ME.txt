@@ -1,10 +1,38 @@
+NOVIDADES DA 2.0.9 (16/11/2026)
+
+- Janelas de aplicativos e minijogos abrem maximizadas, dentro do ClaQui OS.
+- Tela de fim de Trilha compacta para celular, com os 3 botões sempre visíveis.
+- Jogo da Velha: escolha X ou O e quem começa (aleatório 50/50, jogador ou máquina).
+  Modo Ladrão respeita o símbolo da máquina, com peça extra e contestação.
+- Menu de botão direito contextual, único para cada janela; novas questões do
+  banco B7 com resposta escondida no menu. Seeds dos bancos anteriores preservadas.
+- Touchpad virtual opcional em Configurações > Mouse, desativado por padrão.
+- PWA online com ícones próprios e instalação via navegador (HTTPS obrigatório).
+  Quando não houver internet, mostra apenas o globo, a carinha triste em cinza
+  e o botão Tentar novamente. Sem jogo completo offline.
+- Easter egg: toque no ícone triste sem internet para abrir o Offline Runner,
+  também disponível em Start e Mais opções, com conquistas e recorde local.
+- ClaQui Update: consulta a versão do servidor em version.json e oferece recarregar
+  após confirmação. Não altera automaticamente arquivos locais de uma edição .bat.
+
+IMPORTANTE SOBRE O PWA: para a tela offline funcionar, abra a versão online
+pelo menos uma vez, com conexão, para que o navegador registre o service worker.
+Somente a tela offline e seus recursos mínimos ficam em cache. Na primeira
+instalação, é necessária internet; sem acesso ao servidor o jogo online não abre.
+
+NOTA DE TESTES: testes automatizados Node passaram; a validação visual E2E do
+Chromium não pôde ser executada neste ambiente por bloqueio de acesso local.
+
+==========================================================================
+
+HISTÓRICO DA 2.0.8
 NOVIDADES DA 2.0.8
 - Mouse: cursores agora carregam corretamente em PNG (fallback SVG), com quatro esquemas, 15 tipos e área de teste em Configurações > Mouse.
 - Menu Iniciar: contém todos os programas, categorias e lista rolável, com Desligar e Reiniciar fixos.
 - Desvio CQ: não termina mais no nível 10; recorde de nível salvo, obstáculos com velocidade limitada e conquistas para níveis 25/50/100.
 - Funciona no navegador, somente dentro do ClaQui OS; não altera o mouse real nem o Windows.
 
-CLASSIQUIZ v2.0.8 — ClaQui OS — Novembro/2026
+CLASSIQUIZ v2.0.9 — ClaQui OS — Novembro/2026
 UM CLÁSSICO QUE NUNCA EXISTIU
 ==============================================
 

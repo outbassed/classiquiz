@@ -2,7 +2,7 @@
 (() => {
 'use strict';
 const CQ = window.CQ = window.CQ || {};
-CQ.VERSION = '2.0.8';
+CQ.VERSION = '2.0.9';
 CQ.apps = {};
 CQ.rules = {ultra: () => false};          // preenchido pelo jogo: regras que dependem da partida atual
 CQ.KEYS = {SESSION:'classiquiz.v1.session',LIB:'classiquiz.v1.library',PREF:'classiquiz.v1.preferences',ACH:'classiquiz.v1.achievements',
@@ -32,7 +32,7 @@ CQ.bus = {
 
 // ---------- preferências do sistema (ClaQui OS) ----------
 const SYS_DEFAULTS = {scale: null, wallpaper: 'classico', wallpaperFit: 'fill', customWallpaper: false, reduceMotion: 'auto', volume: 70,
-  bootCompleted: false, terminalConsent: false, iconOrder: 'default', theme: 'padrao', cursor: 'padrao', mouseScheme: 'classico', mouseSize: 32, mouseRoles: {}, mouseTrail: false, iconStyle: 'padrao', lastBoot: 0};
+  bootCompleted: false, terminalConsent: false, iconOrder: 'default', theme: 'padrao', cursor: 'padrao', mouseScheme: 'classico', mouseSize: 32, mouseRoles: {}, mouseTrail: false, touchpadEnabled: false, touchpadFolded: false, touchpadSensitivity: 1, touchpadPosition: 'right', touchpadOpacity: .88, touchpadSize: 'medium', iconStyle: 'padrao', lastBoot: 0};
 let sysCache = null;
 CQ.sys = {
   all() { if (!sysCache) { const raw = CQ.store.read(CQ.KEYS.SYS, {}); sysCache = Object.assign({}, SYS_DEFAULTS, raw && typeof raw === 'object' ? raw : {}); } return sysCache; },

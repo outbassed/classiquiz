@@ -1,13 +1,13 @@
-# Inventário de arquivos — ClassiQuiz 2.0.8
+# Inventário de arquivos — ClassiQuiz 2.0.9
 
 Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis** (bancos B1–B5) não foram alterados; **GERADO** significa que é saída reprodutível de `tools/`.
 
 ## Arquitetura
 
-- **Sem bundler e sem servidor obrigatório.** `index.html` carrega scripts simples (`defer`) numa ordem fixa: `core.js` → `vfs.js` → `wm.js` → bancos `data*.js` → `gen.js` → `data-b6.js` → `campaigns-b6.js` → `gen-b6.js` → `app.js` → `missions.js` → `apps-system/files/tools.js` → `ttt-ai.js` → `apps-games.js` → `system-effects.js` → `main.js`. Tudo compartilha o namespace `window.CQ`.
+- **Sem bundler.** O HTML roda diretamente no navegador na edição local, e como PWA na hospedagem HTTPS. O modo web exige internet, exceto a tela offline e seu minijogo.  `index.html` carrega scripts simples (`defer`) numa ordem fixa: `core.js` → `vfs.js` → `wm.js` → bancos `data*.js` → `gen.js` → `data-b6.js` → `campaigns-b6.js` → `gen-b6.js` → `app.js` → `missions.js` → `apps-system/files/tools.js` → `ttt-ai.js` → `apps-games.js` → `system-effects.js` → `main.js`. Tudo compartilha o namespace `window.CQ`.
 - **Camadas.** `core.js` (armazenamento, migração, modais, eventos, som) · `vfs.js` (sistema de arquivos virtual no IndexedDB `classiquiz-os`) · `wm.js` (ClaQui OS: janelas, barra de tarefas, menu Iniciar, menu de contexto, boot, energia, tela azul fictícia; cada programa se registra em `CQ.apps[id]`) · `gen.js`/`gen-b6.js` (geradores **puros e determinísticos**) · `app.js` (o jogo) · `missions.js` (motor das missões de programa) · `apps-*.js` (programas).
-- **Seeds.** Toda Trilha é função da seed: `CQ1-B6-<perfil>-<posições>-<sufixo>` (Trilha Aleatória), `CQU2-B6-<perfil>-ALL-<sufixo>` (Ultra v2), `CQC<n>-B6-U-50-CLASSIQUIZ<n>` (campanhas). As seeds antigas `CQ1-B1…B5` e `CQU1-B5` continuam no gerador antigo, idêntico ao da v1.2.2 (bancos B1–B5 imutáveis).
-- **Segurança.** O ClaQui OS só toca em arquivos **virtuais**; System32, Desligar e Reiniciar são **simulações**. Sem telemetria, anúncios, login nem requisição externa; as ferramentas do navegador (F12) não são bloqueadas.
+- **Seeds.** Toda Trilha é função da seed: `CQ1-B7-<perfil>-<posições>-<sufixo>` (Trilha Aleatória nova), com B6 preservado, `CQU2-B6-<perfil>-ALL-<sufixo>` (Ultra v2), `CQC<n>-B6-U-50-CLASSIQUIZ<n>` (campanhas). As seeds antigas `CQ1-B1…B5` e `CQU1-B5` continuam no gerador antigo, idêntico ao da v1.2.2 (bancos B1–B5 imutáveis).
+- **Segurança.** O ClaQui OS só toca em arquivos **virtuais**; System32, Desligar e Reiniciar são **simulações**. Sem telemetria, anúncios ou login; a central de atualização consulta somente o arquivo de versão do próprio servidor; as ferramentas do navegador (F12) não são bloqueadas.
 - **Armazenamento.** `localStorage` com chaves `classiquiz.v1.*` (`session`, `library`, `preferences`, `achievements`, `system`, `rewards`, `records`, `campaigns`, `meta`, `discoveries`, `calendar`, `player`, `backup.pre-v2`, `ttt`, `calc.divideZeroSeen`) e IndexedDB `classiquiz-os` (arquivos virtuais e fundo de tela importado).
 
 ## Migração de dados (v1.2.x → 2.0.0)
@@ -24,31 +24,36 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | Arquivo | Tamanho | Descrição |
 |---|---|---|
 | `AUDITORIA-QUESTOES.csv` | 141.8 KB | Auditoria dos 534 itens do B5: ação (mantida/ajustada/reescrita/removida), motivo e item equivalente no B6. |
-| `CHANGELOG.md` | 16.8 KB | Histórico de mudanças, correções e pendências da v2.0.8. |
-| `index.html` | 5.8 KB | Página única do ClaQui OS: casca da área de trabalho, barra de tarefas e ordem de carregamento dos scripts. |
+| `CHANGELOG.md` | 19.0 KB | Histórico de mudanças, correções e pendências da v2.0.9. |
+| `index.html` | 6.2 KB | Página única do ClaQui OS: casca da área de trabalho, barra de tarefas e ordem de carregamento dos scripts. |
 | `INICIAR-CLASSIQUIZ.bat` | 1.9 KB | Inicializador para Windows (PowerShell → Python → Node → abre index.html direto). |
-| `INVENTARIO-ARQUIVOS.md` | 34.0 KB | Este arquivo (gerado por tools/gerar-inventario.js). |
+| `INVENTARIO-ARQUIVOS.md` | 49.1 KB | Este arquivo (gerado por tools/gerar-inventario.js). |
 | `launcher.js` | 1.4 KB | Servidor HTTP local em Node. |
 | `launcher.ps1` | 5.2 KB | Servidor HTTP local em PowerShell (porta 8765). |
 | `launcher.py` | 1.6 KB | Servidor HTTP local em Python. |
-| `LEIA-ME.txt` | 7.2 KB | Como abrir, o que mudou, dados preservados e pendências. |
+| `LEIA-ME.txt` | 8.9 KB | Como abrir, o que mudou, dados preservados e pendências. |
 | `LICENCA-CODIGO.txt` | 1.0 KB | Licença MIT do código. |
-| `MANUAL-CLAQUI-OS.md` | 14.5 KB | Manual do sistema e do jogo. |
+| `manifest.webmanifest` | 593 B | Manifest de instalação do PWA online. |
+| `MANUAL-CLAQUI-OS.md` | 16.4 KB | Manual do sistema e do jogo. |
 | `NOVOS-ITENS-B6.csv` | 18.4 KB | Itens criados do zero para o banco B6. |
-| `RELATORIO-TESTES.md` | 26.2 KB | Relatório honesto dos testes executados e não executados. |
+| `offline.html` | 4.5 KB | Tela sem internet e easter egg Offline Runner. |
+| `RELATORIO-TESTES.md` | 27.7 KB | Relatório honesto dos testes executados e não executados. |
+| `sw.js` | 726 B | Service worker com cache restrito aos recursos offline. |
+| `version.json` | 162 B | Versão de referência para consulta pelo ClaQui Update. |
 
 ### assets/js
 
 | Arquivo | Tamanho | Descrição |
 |---|---|---|
-| `assets/js/app.js` | 76.1 KB | Jogo: estado da partida, renderização das etapas, conquistas, biblioteca, Ultra, Fichas, janelas do jogo. |
+| `assets/js/app.js` | 79.5 KB | Jogo: estado da partida, renderização das etapas, conquistas, biblioteca, Ultra, Fichas, janelas do jogo. |
 | `assets/js/apps-desvio.js` | 10.6 KB | Desvio CQ: arcade de obstáculos, bônus, níveis contínuos, recorde e teto de dificuldade. |
 | `assets/js/apps-files.js` | 19.0 KB | Explorador de Arquivos, Lixeira e Visualizador. |
-| `assets/js/apps-games.js` | 24.5 KB | Campo Minado, Jogo da Velha, Cobrinha, Pong. |
-| `assets/js/apps-system.js` | 34.9 KB | Configurações, Terminal + UAC, Sobre, Atualizações, Estatísticas, Recompensas, pasta Mais opções sem Outros. |
+| `assets/js/apps-games.js` | 25.9 KB | Campo Minado, Jogo da Velha, Cobrinha, Pong. |
+| `assets/js/apps-runner.js` | 710 B | Janela do Offline Runner dentro do ClaQui OS. |
+| `assets/js/apps-system.js` | 41.4 KB | Configurações, Terminal + UAC, Sobre, Atualizações, Estatísticas, Recompensas, pasta Mais opções sem Outros. |
 | `assets/js/apps-tools.js` | 26.6 KB | Bloco de Notas, Calculadora, Paint, Calendário, Relógio, Reprodutor. |
 | `assets/js/campaigns-b6.js` | 2.5 KB | Tabela fixa e curada das campanhas ClassiQuiz 1/2/3 (GERADA por tools/curate-campaigns.js). |
-| `assets/js/core.js` | 11.0 KB | Núcleo: namespace CQ, armazenamento, migração idempotente, modais, barramento de eventos, som. |
+| `assets/js/core.js` | 11.1 KB | Núcleo: namespace CQ, armazenamento, migração idempotente, modais, barramento de eventos, som. |
 | `assets/js/data-b1.js` | 20.4 KB | Dados do banco B1 (imutável). |
 | `assets/js/data-b2.js` | 26.0 KB | Dados do banco B2 (imutável). |
 | `assets/js/data-b3.js` | 35.2 KB | Dados do banco B3 (imutável). |
@@ -56,14 +61,18 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `assets/js/data-b6.js` | 191.1 KB | Banco B6 (GERADO por tools/build-b6.js): perguntas, estendidas, pegadinhas, minijogos, histórias, Show, missões. |
 | `assets/js/data.js` | 46.3 KB | Dados do banco B4 (imutável). |
 | `assets/js/gen-b6.js` | 12.4 KB | Gerador do banco B6, Ultra v2, campanhas e janelas do Show do Milhozão. |
+| `assets/js/gen-b7.js` | 1.9 KB | Gerador do B7: pergunta de menu contextual por Trilha, preservando B1-B6. |
 | `assets/js/gen.js` | 31.2 KB | Geradores PUROS das Trilhas B1–B5 (extraídos sem alteração da v1.2.2) e registro de bancos. |
 | `assets/js/main.js` | 434 B | Ponto de entrada: inicia o sistema e o jogo. |
 | `assets/js/missions.js` | 8.6 KB | Motor das missões de programa (Bloco de Notas, Calculadora, Paint, Explorador, Lixeira, Visualizador, manter aberto). |
 | `assets/js/mouse.js` | 3.2 KB | Ponteiros com caminhos absolutos, PNG/SVG e 15 papéis. |
+| `assets/js/offline-runner.js` | 7.8 KB | Motor original do Offline Runner compartilhado entre app e tela offline. |
+| `assets/js/pwa.js` | 331 B | Registro do service worker do PWA. |
 | `assets/js/system-effects.js` | 2.0 KB | Efeitos seguros e temporários das exclusões fictícias de pastas do ClaQui OS. |
-| `assets/js/ttt-ai.js` | 4.4 KB | Motor puro do Jogo da Velha: quatro estratégias, Minimax e geometria da fraude. |
+| `assets/js/touchpad.js` | 5.7 KB | Touchpad virtual opcional para dispositivos móveis. |
+| `assets/js/ttt-ai.js` | 4.6 KB | Motor puro do Jogo da Velha: quatro estratégias, Minimax e geometria da fraude. |
 | `assets/js/vfs.js` | 24.5 KB | Sistema de arquivos VIRTUAL (IndexedDB): pastas, arquivos, Lixeira, System32 fictício, pastas de casos (puzzles). |
-| `assets/js/wm.js` | 30.8 KB | ClaQui OS: gerenciador de janelas, barra de tarefas, menu Iniciar, menu de contexto, boot, energia, tela azul fictícia. |
+| `assets/js/wm.js` | 31.9 KB | ClaQui OS: gerenciador de janelas, barra de tarefas, menu Iniciar, menu de contexto, boot, energia, tela azul fictícia. |
 
 ### assets/css e mídia
 
@@ -71,9 +80,9 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 |---|---|---|
 | `assets/classiquiz-animado.gif` | 274.2 KB | Marca animada do desktop (v1.2.x). |
 | `assets/classiquiz-icon.svg` | 2.9 KB | Ícone do ClassiQuiz. |
-| `assets/css/apps.css` | 20.5 KB | Estilos dos programas. |
-| `assets/css/mouse.css` | 3.5 KB | Cursores do ClaQui OS e área de teste. |
-| `assets/css/os.css` | 15.4 KB | Estilos do ClaQui OS (janelas, barra, menus, boot). |
+| `assets/css/apps.css` | 31.4 KB | Estilos dos programas. |
+| `assets/css/mouse.css` | 5.4 KB | Cursores do ClaQui OS e área de teste. |
+| `assets/css/os.css` | 17.4 KB | Estilos do ClaQui OS (janelas, barra, menus, boot). |
 | `assets/css/style.css` | 21.4 KB | Estilos base e do jogo. |
 | `assets/cursors/aero-busy-24.png` | 971 B | Cursor PNG original para compatibilidade com Chrome. |
 | `assets/cursors/aero-busy-24.svg` | 337 B | Cursor SVG original (fallback). |
@@ -438,6 +447,9 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `assets/favicon.svg` | 384 B | Favicon herdado da v1.2.2. |
 | `assets/img/claquim.svg` | 1.4 KB | Mascote Claquim (assistente do ClaQui OS). |
 | `assets/img/milhito.svg` | 1.4 KB | Mascote Milhito (apresentador do Show do Milhozão). |
+| `assets/offline-sad.svg` | 3.0 KB | Ícone cinza triste offline do ClassiQuiz. |
+| `assets/pwa-192.png` | 1.4 KB | Ícone PWA 192 pixels. |
+| `assets/pwa-512.png` | 3.1 KB | Ícone PWA 512 pixels. |
 
 ### assets/icons
 
@@ -502,7 +514,7 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `tools/b6-fonte/` | - | Fonte editorial do B6: correções por item (ov-*.js), itens novos (new-std.js) e conteúdo (content.js). |
 | `tools/build-b6.js` | 10.9 KB | Gera data-b6.js e os CSV de auditoria a partir do B5 + correções + conteúdo novo. |
 | `tools/curate-campaigns.js` | 7.1 KB | Gera campaigns-b6.js (curadoria das 3 campanhas). |
-| `tools/gerar-inventario.js` | 12.9 KB | Gera este inventário. |
+| `tools/gerar-inventario.js` | 14.1 KB | Gera este inventário. |
 | `tools/loaddata.js` | 576 B | Carrega os bancos no Node com um "window" falso. |
 | `tools/make-cursors.py` | 7.9 KB | — |
 | `tools/make-icons.js` | 16.3 KB | Gera os ícones e mascotes SVG autorais. |
@@ -536,8 +548,9 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `tests/legacy-seeds.test.js` | 1.5 KB | Compara 327 seeds antigas com a v1.2.2 original (357 verificações). |
 | `tests/lib/load.js` | 709 B | Carregador de scripts do navegador para os testes Node. |
 | `tests/mouse-206.test.js` | 2.2 KB | Valida caminhos absolutos e 180 PNGs/180 SVGs de cursores. |
-| `tests/package.json` | 595 B | Dependência de teste (playwright-core) e scripts npm. |
+| `tests/package.json` | 616 B | Dependência de teste (playwright-core) e scripts npm. |
 | `tests/ttt.test.js` | 2.7 KB | Testes Node das probabilidades, geometria da fraude e algoritmo Minimax perfeito. |
+| `tests/v209.test.js` | 4.6 KB | Regressão B7, Minimax X/O, conquistas offline e PWA da versão 2.0.9. |
 | `tests/vfs-204.test.js` | 2.7 KB | Testes Node de migração, navegação, arquivos ocultos, exclusões e restauração do disco virtual. |
 
 ### licencas

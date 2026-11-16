@@ -35,3 +35,17 @@
  #app .mouse-test-text{cursor:var(--cq-cur-login,text)}
  #app .mouse-test-busy{cursor:var(--cq-cur-busy,wait)}
 }
+/* Touchpad virtual, somente em dispositivos móveis após habilitação. */
+#cq-touchpad{position:absolute;z-index:140;bottom:calc(var(--taskbar-h) + 14px);width:230px;padding:5px;border:3px outset #fff;box-shadow:3px 3px #091c35;background:rgba(186,193,206,var(--tp-opacity,.88));color:#19283f;font:800 12px system-ui;user-select:none;touch-action:none}
+#cq-touchpad[hidden],#cq-touch-cursor[hidden]{display:none!important}
+#cq-touchpad[data-position="right"]{right:8px}#cq-touchpad[data-position="left"]{left:8px}
+#cq-touchpad .cq-touchpad-title{display:flex;justify-content:space-between;align-items:center;background:#24478b;color:#fff;padding:2px 7px;min-height:27px;letter-spacing:.7px}
+#cq-touchpad .cq-touchpad-title button{background:#c9cad4;color:#203059;border:2px outset #fff;min-height:23px;width:30px}
+#cq-touchpad .cq-touchpad-surface{margin:5px 0;height:95px;border:2px inset #fff;border-radius:4px;background:linear-gradient(135deg,#c7cdd6,#8d9db7);touch-action:none;cursor:crosshair}
+#cq-touchpad .cq-touchpad-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
+#cq-touchpad .cq-touchpad-buttons button{border:2px outset #fff;background:#d6d7dd;color:#172743;font:700 11px system-ui;min-height:36px;padding:2px}
+#cq-touchpad .cq-touchpad-buttons button[aria-pressed="true"]{background:#7e9aca;border-style:inset}
+#cq-touchpad[data-folded="true"]{width:155px}#cq-touchpad[data-folded="true"] .cq-touchpad-surface,#cq-touchpad[data-folded="true"] .cq-touchpad-buttons{display:none}
+#cq-touchpad[data-folded="true"] .cq-touchpad-title button{font-size:0}#cq-touchpad[data-folded="true"] .cq-touchpad-title button:after{content:'+';font-size:15px}
+#cq-touch-cursor{position:fixed;z-index:500;pointer-events:none;object-fit:contain;image-rendering:pixelated;transform:translate(-3px,-3px)}
+@media(max-width:600px){#cq-touchpad{width:190px}#cq-touchpad .cq-touchpad-surface{height:80px}#cq-touchpad .cq-touchpad-buttons button{font-size:10px}}

@@ -1,4 +1,15 @@
-# Manual do ClaQui OS (ClassiQuiz 2.0.8)
+# Manual do ClaQui OS (ClassiQuiz 2.0.9)
+
+## Novidades 2.0.9: touchpad, menus e PWA
+
+- **Janelas**: programas principais abrem maximizados; use o controle de restaurar para diminuir uma janela. A barra de tarefas continua disponível.
+- **Botão direito**: menus específicos por programa, arquivo ou pergunta. Em novas Trilhas **B7**, a opção correta pode aparecer no menu contextual, e não entre as alternativas. No celular, pressione e segure ou use o botão Direito do touchpad virtual.
+- **Jogo da Velha**: escolha o X ou O e a preferência por primeiro lance (Aleatório, Jogador, Máquina). Se a máquina usar o modo Ladrão, o símbolo ilegal corresponde ao dela, e a vitória pode ser contestada.
+- **Touchpad**: em Configurações → Mouse marque "Ativar touchpad virtual" num dispositivo de toque. Um dedo move o ponteiro, toque clica, dois dedos rolam, botões realizam clique esquerdo/direito e Segurar habilita arraste. É desativado por padrão.
+- **Instalar PWA**: use a versão servida por HTTPS (por exemplo, após publicar na Vercel). O navegador pode oferecer "Instalar app" ou "Adicionar à tela inicial". O ClassiQuiz principal exige internet.
+- **Sem conexão**: depois da primeira visita online, uma pequena tela offline passa a estar disponível. Um globo e o ícone cinza triste aparecem; toque em "Tentar novamente" para voltar. Ao clicar no ícone triste, abre o **Offline Runner**, também acessível em Start / Mais opções. Somente a tela e o Runner são armazenados para uso offline.
+- **ClaQui Update**: abra pelo Start ou Mais opções. "Procurar atualizações" consulta `version.json`; se houver uma versão nova, a página pergunta antes de recarregar. Esta ferramenta não substitui os arquivos do pacote local de Windows.
+- **Conquistas**: "Sem internet" por abrir a tela offline, "Segredo desconectado" por descobrir o Runner offline, e cinco metas de pontuação/obstáculos/tempo para o Runner. Todas usam o armazenamento local do mesmo navegador e origem.
 
 > **UM CLÁSSICO QUE NUNCA EXISTIU.** O ClaQui OS é um sistema operacional **de mentirinha** que roda dentro do navegador. Tudo o que ele "apaga", "desliga" ou "reinicia" é **simulação** sobre arquivos **virtuais**; o seu computador de verdade nunca é tocado.
 

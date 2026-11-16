@@ -76,6 +76,7 @@ button,[data-act],.desktop-shortcut,.task-program,[data-ctx-i],[role="menuitem"]
 .start-menu hr{border:0;border-top:2px groove #f7f7f7;margin:3px 4px}
 .cq-context{position:absolute;min-width:230px;z-index:120;background:#c0c0c0;border:3px outset #fff;box-shadow:3px 4px #1f3554;padding:4px;display:flex;flex-direction:column;gap:1px;color:#151b2c}
 .cq-context[hidden]{display:none!important}
+.cq-context{max-height:calc(100% - var(--taskbar-h) - 16px);overflow:auto;overscroll-behavior:contain}
 .cq-context button{display:flex;text-align:left;align-items:center;gap:10px;min-height:34px;padding:5px 8px;background:transparent;border:none;color:#151b2c;font-size:13px;font-weight:750}
 .cq-context button img{width:22px;height:22px;object-fit:contain}.cq-context button span{width:22px}
 .cq-context button:hover,.cq-context button:focus-visible{background:#193985;color:#fff}
@@ -138,3 +139,18 @@ button,[data-act],.desktop-shortcut,.task-program,[data-ctx-i],[role="menuitem"]
 
 .start-menu-power button{font-size:12px;min-width:0;padding:6px 4px;gap:5px;min-height:38px}
 .start-menu-power .start-item-icon{width:22px;height:22px;flex-basis:22px}
+
+/* v2.0.9: touchpad móvel opcional. Não intercepta os toques fora do painel. */
+#cq-touchpad{position:absolute;z-index:175;right:clamp(7px,2cqw,22px);bottom:calc(var(--taskbar-h) + 12px);width:clamp(150px,32cqw,235px);background:#c7c8ce;border:3px outset #fff;padding:5px;color:#192b55;box-shadow:3px 4px #0b2746;opacity:var(--tp-opacity,.88);font-size:11px;touch-action:none;pointer-events:auto}
+#cq-touchpad[hidden],#cq-touch-cursor[hidden]{display:none!important}
+#cq-touchpad[data-position="left"]{right:auto;left:clamp(7px,2cqw,22px)}
+#cq-touchpad .cq-touchpad-title{display:flex;align-items:center;justify-content:space-between;color:#fff;background:#22478b;padding:3px 6px;font-weight:900}
+#cq-touchpad .cq-touchpad-title button{padding:0 7px;background:#e3e3e7;border:2px outset #fff;color:#1a2d54;font-weight:900}
+#cq-touchpad .cq-touchpad-surface{border:3px inset #fff;background:repeating-linear-gradient(45deg,#dfe1e8 0 9px,#e9ebef 9px 18px);width:100%;height:clamp(76px,17cqh,139px);margin:5px 0;touch-action:none}
+#cq-touchpad .cq-touchpad-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+#cq-touchpad .cq-touchpad-buttons button{min-height:34px;min-width:0;padding:3px 0;font-size:10px;font-weight:850;color:#1d345d;background:#dfe2e9;border:2px outset #fff}
+#cq-touchpad .cq-touchpad-buttons button[aria-pressed="true"]{border-style:inset;background:#acc4ed}
+#cq-touchpad[data-folded="true"]{width:125px}
+#cq-touchpad[data-folded="true"] .cq-touchpad-surface,#cq-touchpad[data-folded="true"] .cq-touchpad-buttons{display:none}
+#cq-touch-cursor{position:fixed;left:0;top:0;width:32px;height:32px;transform:translate(-2px,-2px);pointer-events:none;z-index:210;image-rendering:pixelated}
+@container app (max-height:440px){#cq-touchpad{bottom:calc(var(--taskbar-h) + 4px);width:clamp(138px,26cqw,185px)}#cq-touchpad .cq-touchpad-surface{height:65px}#cq-touchpad .cq-touchpad-buttons button{min-height:27px}}

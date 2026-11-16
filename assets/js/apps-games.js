@@ -72,100 +72,90 @@ A.mines = {title: 'Campo Minado', icon: 'assets/icons/campo-minado.svg', bodyCla
 // =============== Jogo da Velha ===============
 const TTT = window.CQ_TTT;
 const TTT_KEY = 'classiquiz.v1.ttt';
+const TTT_PREF_KEY = 'classiquiz.v1.ttt.options';
 function tttReadScore() {
-  const saved = CQ.store.read(TTT_KEY, null);
-  const get = k => Number.isSafeInteger(saved?.[k]) && saved[k] >= 0 ? saved[k] : 0;
-  if (saved && typeof saved === 'object') return {x: get('x'), o: get('o'), d: get('d')};
-  // A v2.0.0 não salvava o placar, mas registrava vitórias nas estatísticas
-  // de conquistas. Recuperamos o que for possível; derrotas/empates não
-  // eram persistidos e não podem ser reconstruídos.
-  const oldWins = CQ.game?.achievementsState?.()?.stats?.tttWins;
-  return {x: Number.isSafeInteger(oldWins) && oldWins > 0 ? oldWins : 0, o: 0, d: 0};
+  const saved=CQ.store.read(TTT_KEY,null);
+  const get=k=>Number.isSafeInteger(saved?.[k])&&saved[k]>=0?saved[k]:0;
+  if(saved&&typeof saved==='object') return {x:get('x'),o:get('o'),d:get('d')};
+  const n=CQ.game?.achievementsState?.()?.stats?.tttWins;
+  return {x:Number.isSafeInteger(n)&&n>0?n:0,o:0,d:0};
 }
-const ttt = {b: Array(9).fill(''), over: false, res: '', score: tttReadScore(), line: null,
-  mode: '', cheat: null, contested: false};
-function tttSave() { CQ.store.write(TTT_KEY, ttt.score); }
-function tttNew() {
-  Object.assign(ttt, {b: Array(9).fill(''), over: false, res: '', line: null,
-    cheat: null, contested: false, mode: TTT.rollMode(ttt.score.x)});
+const rawOpt=CQ.store.read(TTT_PREF_KEY,{});
+const tttOpts={mark:rawOpt?.mark==='O'?'O':'X',starter:['random','player','machine'].includes(rawOpt?.starter)?rawOpt.starter:'random'};
+const ttt={b:Array(9).fill(''),over:false,res:'',score:tttReadScore(),line:null,mode:'',cheat:null,contested:false,turn:'player',mark:tttOpts.mark,ai:tttOpts.mark==='X'?'O':'X',starter:'player'};
+function tttSave(){CQ.store.write(TTT_KEY,ttt.score);}
+function tttNew(){
+  const mark=tttOpts.mark, ai=mark==='X'?'O':'X';
+  const starter=tttOpts.starter==='random'?(Math.random()<.5?'player':'machine'):tttOpts.starter;
+  Object.assign(ttt,{b:Array(9).fill(''),over:false,res:'',line:null,cheat:null,contested:false,
+    mode:TTT.rollMode(ttt.score.x),mark,ai,starter,turn:starter});
+  if(starter==='machine')tttComputer();
 }
-tttNew();
-function tttEnd() {
-  const wX = TTT.win(ttt.b, 'X'), wO = TTT.win(ttt.b, 'O');
-  if (wX) { ttt.over = true; ttt.res = 'Você venceu!'; ttt.score.x++; ttt.line = wX; statApp('tttWins'); }
-  else if (wO) { ttt.over = true; ttt.res = 'O computador venceu.'; ttt.score.o++; ttt.line = wO; }
-  else if (ttt.b.every(v => v)) { ttt.over = true; ttt.res = 'Deu velha!'; ttt.score.d++; }
-  if (ttt.over) tttSave();
+function tttEnd(){
+  const winPlayer=TTT.win(ttt.b,ttt.mark),winAI=TTT.win(ttt.b,ttt.ai);
+  if(winPlayer){ttt.over=true;ttt.res='Você venceu!';ttt.score.x++;ttt.line=winPlayer;statApp('tttWins');}
+  else if(winAI){ttt.over=true;ttt.res='O computador venceu.';ttt.score.o++;ttt.line=winAI;}
+  else if(ttt.b.every(Boolean)){ttt.over=true;ttt.res='Deu velha!';ttt.score.d++;}
+  if(ttt.over)tttSave();
 }
-function tttComputer() {
-  if (ttt.mode === 'ladrao' && !ttt.contested && ttt.score.x >= 1) {
-    const stolen = TTT.makeFraud(ttt.b);
-    if (stolen !== -1) {
-      ttt.cheat = stolen; ttt.over = true; ttt.res = 'O computador venceu.';
-      ttt.score.o++; tttSave(); statApp('tttCheated'); CQ.tone(190, 160);
-      return;
-    }
+function tttComputer(){
+  if(ttt.over)return;
+  if(ttt.mode==='ladrao'&&!ttt.contested&&ttt.score.x>=1){
+    const fraud=TTT.makeFraud(ttt.b,Math.random,ttt.ai);
+    if(fraud!==-1){ttt.cheat=fraud;ttt.over=true;ttt.res='O computador venceu.';ttt.score.o++;tttSave();statApp('tttCheated');CQ.tone(190,160);return;}
   }
-  const mode = ttt.contested && ttt.mode === 'ladrao' ? 'medio' : ttt.mode;
-  const m = TTT.choose(mode, ttt.b);
-  if (m >= 0) ttt.b[m] = 'O';
-  tttEnd();
+  const mode=ttt.contested&&ttt.mode==='ladrao'?'medio':ttt.mode;
+  const i=TTT.choose(mode,ttt.b,Math.random,ttt.ai);
+  if(i>=0)ttt.b[i]=ttt.ai;
+  tttEnd();ttt.turn='player';
 }
-function tttDraw(w) {
-  const cheat = ttt.cheat;
-  const ghost = cheat ? `<button type="button" class="ttt-ghost" data-act="ttt-fake" style="left:${(cheat.outer.x + 1) * 20}%;top:${(cheat.outer.y + 1) * 20}%" aria-label="O fora do tabuleiro" title="O fora do tabuleiro">O</button>` : '';
-  const stroke = cheat ? (() => {
-    const a = cheat.pair[0], b = cheat.pair[1];
-    const pts = [[a % 3 + .5, Math.floor(a / 3) + .5], [b % 3 + .5, Math.floor(b / 3) + .5], [cheat.outer.x + .5, cheat.outer.y + .5]];
-    const dx = pts[1][0] - pts[0][0], dy = pts[1][1] - pts[0][1];
-    pts.sort((x,y) => (x[0] * dx + x[1] * dy) - (y[0] * dx + y[1] * dy));
-    const from = pts[0], to = pts[2];
-    return `<svg class="ttt-cheat-line" aria-hidden="true" viewBox="-1 -1 5 5" preserveAspectRatio="none"><line x1="${from[0]}" y1="${from[1]}" x2="${to[0]}" y2="${to[1]}" stroke="#d33848" stroke-width=".085" stroke-linecap="round" /></svg>`;
-  })() : '';
-  const cells = ttt.b.map((v, i) => `<button type="button" class="tc ${v} ${ttt.line?.includes(i) || cheat?.pair.includes(i) ? 'win' : ''}" data-act="ttt-cell" data-i="${i}" ${v || ttt.over ? 'disabled' : ''} aria-label="Casa ${i + 1}${v ? ': ' + v : ''}">${v}</button>`).join('');
-  w.body.innerHTML = `<div class="ttt"><p class="ttt-status" role="status">${ttt.over ? E(ttt.res) : 'Sua vez (X)'}</p>
-    <div class="ttt-stage ${cheat ? 'cheated' : ''}"><div class="ttt-grid" role="grid">${cells}</div>${stroke}${ghost}</div>
-    <p class="muted">Você ${ttt.score.x} • Computador ${ttt.score.o} • Velhas ${ttt.score.d}</p>
-    <div class="actions"><button type="button" class="chrome-button primary" data-act="ttt-new">Nova partida</button><button type="button" class="chrome-button" data-act="ttt-reset">Resetar</button></div></div>`;
-  w.setTitle('Jogo da Velha'); w.setStatus(ttt.over ? ttt.res : 'Você joga com X.', '');
+function tttDraw(w){
+  const c=ttt.cheat;
+  const ghost=c?`<button type="button" class="ttt-ghost ${ttt.ai}" data-act="ttt-fake" style="left:${(c.outer.x+1)*20}%;top:${(c.outer.y+1)*20}%" aria-label="${ttt.ai} fora do tabuleiro; contestar resultado" title="Contestar resultado">${ttt.ai}</button>`:'';
+  const stroke=c?(()=>{const a=c.pair[0],b=c.pair[1];const pts=[[a%3+.5,Math.floor(a/3)+.5],[b%3+.5,Math.floor(b/3)+.5],[c.outer.x+.5,c.outer.y+.5]];const dx=pts[1][0]-pts[0][0],dy=pts[1][1]-pts[0][1];pts.sort((x,y)=>(x[0]*dx+x[1]*dy)-(y[0]*dx+y[1]*dy));return `<svg class="ttt-cheat-line" viewBox="-1 -1 5 5" aria-hidden="true"><line x1="${pts[0][0]}" y1="${pts[0][1]}" x2="${pts[2][0]}" y2="${pts[2][1]}" stroke="${ttt.ai==='X'?'#244c9d':'#d33848'}" stroke-width=".085" stroke-linecap="round" /></svg>`;})():'';
+  const cells=ttt.b.map((v,i)=>`<button type="button" class="tc ${v} ${ttt.line?.includes(i)||c?.pair.includes(i)?'win':''}" data-act="ttt-cell" data-i="${i}" ${v||ttt.over?'disabled':''} aria-label="Casa ${i+1}${v?': '+v:''}">${v}</button>`).join('');
+  const intro=ttt.starter==='machine'?'A máquina começou esta partida.':'Você começou esta partida.';
+  w.body.innerHTML=`<div class="ttt" aria-label="Jogo da Velha">
+    <div class="ttt-options"><fieldset><legend>Seu símbolo</legend><button type="button" class="ttt-choice ${tttOpts.mark==='X'?'selected':''}" data-act="ttt-mark" data-value="X" aria-pressed="${tttOpts.mark==='X'}">X</button><button type="button" class="ttt-choice ${tttOpts.mark==='O'?'selected':''}" data-act="ttt-mark" data-value="O" aria-pressed="${tttOpts.mark==='O'}">O</button></fieldset><label>Quem começa?<select data-act="ttt-starter"><option value="random" ${tttOpts.starter==='random'?'selected':''}>Aleatório (50/50)</option><option value="player" ${tttOpts.starter==='player'?'selected':''}>Jogador</option><option value="machine" ${tttOpts.starter==='machine'?'selected':''}>Máquina</option></select></label></div>
+    <p class="ttt-status" role="status">${ttt.over?E(ttt.res):'Sua vez ('+ttt.mark+')'}</p><p class="ttt-hint muted">${intro} Você: ${ttt.mark} • Máquina: ${ttt.ai}</p>
+    <div class="ttt-stage ${c?'cheated':''}"><div class="ttt-grid" role="grid">${cells}</div>${stroke}${ghost}</div>
+    ${c?'<button type="button" class="chrome-button ttt-contest" data-act="ttt-fake">⚠ Contestar resultado</button>':''}
+    <p class="ttt-score muted">Você ${ttt.score.x} • Computador ${ttt.score.o} • Velhas ${ttt.score.d}</p>
+    <div class="actions"><button type="button" class="chrome-button primary" data-act="ttt-new">Nova partida</button><button type="button" class="chrome-button" data-act="ttt-reset">Resetar placar</button></div></div>`;
+  w.setTitle('Jogo da Velha');w.setStatus(ttt.over?ttt.res:`Você: ${ttt.mark} • Máquina: ${ttt.ai}`,'');
 }
-async function tttContest(w) {
-  if (!ttt.cheat) return;
-  const yes = await CQ.ui.confirm('Contestar resultado',
-    '<p>O computador colocou um O fora do tabuleiro. Anular essa vitória e passar a vez para você?</p>',
-    'Contestar resultado', 'Deixar como está');
-  if (!yes || !ttt.cheat) return;
-  ttt.score.o = Math.max(0, ttt.score.o - 1);
-  Object.assign(ttt, {cheat: null, over: false, res: '', line: null, contested: true});
-  tttSave(); tttDraw(w);
+async function tttContest(w){
+  if(!ttt.cheat)return;
+  const yes=await CQ.ui.confirm('Contestar resultado',`<p>O computador colocou um <b>${ttt.ai}</b> fora do tabuleiro. Anular essa vitória e passar a vez para você?</p>`,'Contestar resultado','Deixar como está');
+  if(!yes||!ttt.cheat)return;
+  ttt.score.o=Math.max(0,ttt.score.o-1);
+  Object.assign(ttt,{cheat:null,over:false,res:'',line:null,contested:true,turn:'player'});
+  tttSave();tttDraw(w);
 }
-async function tttReset(w) {
-  const yes = await CQ.ui.confirm('Resetar o Jogo da Velha',
+async function tttReset(w){
+  const yes=await CQ.ui.confirm('Resetar o Jogo da Velha',
     '<p>Zerar as vitórias, derrotas e empates e começar uma nova partida?</p><p>As conquistas já desbloqueadas não serão apagadas.</p>',
-    'Sim, resetar placar', 'Cancelar', true);
-  if (!yes) return;
-  ttt.score = {x: 0, o: 0, d: 0}; tttSave(); tttNew(); tttDraw(w);
+    'Sim, resetar placar','Cancelar',true);
+  if(!yes)return;
+  ttt.score={x:0,o:0,d:0};tttSave();tttNew();tttDraw(w);
 }
-A.ttt = {title: 'Jogo da Velha', icon: 'assets/icons/jogo-da-velha.svg', bodyClass: 'page', maxDefault: false, w: 420, h: 590, persistent: true,
-  render(w) {
-    if (!w._bound) {
-      w._bound = true;
-      w.body.addEventListener('click', e => {
-        const b = e.target.closest('[data-act]'); if (!b) return;
-        const act = b.dataset.act;
-        if (act === 'ttt-new') { tttNew(); tttDraw(w); }
-        else if (act === 'ttt-reset') void tttReset(w);
-        else if (act === 'ttt-fake') void tttContest(w);
-        else if (act === 'ttt-cell') {
-          const i = Number(b.dataset.i);
-          if (ttt.over || ttt.b[i] || !Number.isInteger(i) || i < 0 || i > 8) return;
-          ttt.b[i] = 'X'; CQ.tone(520, 50); tttEnd();
-          if (!ttt.over) tttComputer();
-          tttDraw(w);
+function tttPrefsApply(w){CQ.store.write(TTT_PREF_KEY,{...tttOpts});tttNew();tttDraw(w);}
+tttNew();
+A.ttt={title:'Jogo da Velha',icon:'assets/icons/jogo-da-velha.svg',bodyClass:'page ttt-page',w:560,h:650,persistent:true,
+  render(w){
+    if(!w._bound){w._bound=true;
+      w.body.addEventListener('change',e=>{if(e.target.dataset.act==='ttt-starter'&&['random','player','machine'].includes(e.target.value)){tttOpts.starter=e.target.value;tttPrefsApply(w);}});
+      w.body.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const act=b.dataset.act;
+        if(act==='ttt-mark'&&['X','O'].includes(b.dataset.value)){tttOpts.mark=b.dataset.value;tttPrefsApply(w);}
+        else if(act==='ttt-new'){tttNew();tttDraw(w);}
+        else if(act==='ttt-reset')void tttReset(w);
+        else if(act==='ttt-fake')void tttContest(w);
+        else if(act==='ttt-cell'){
+          const i=Number(b.dataset.i);if(ttt.over||ttt.turn!=='player'||ttt.b[i]||!Number.isInteger(i)||i<0||i>8)return;
+          ttt.b[i]=ttt.mark;CQ.tone(520,50);tttEnd();if(!ttt.over){ttt.turn='machine';tttComputer();}tttDraw(w);
         }
       });
-    }
-    tttDraw(w);
+    }tttDraw(w);
   }
 };
 

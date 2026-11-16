@@ -5,7 +5,7 @@
 const CQ = window.CQ, G = window.CQ_GEN, E = CQ.E, OS = CQ.os, WM = OS.wm, K = CQ.KEYS;
 if (!G) { document.getElementById('desktop').textContent = 'Não foi possível carregar o banco de perguntas.'; return; }
 const TIMEOUT = 20 * 60 * 1000;
-const NEWBANK = () => (G.bankAvailable('B6') ? 'B6' : 'B5');
+const NEWBANK = () => (G.bankAvailable('B7') ? 'B7' : G.bankAvailable('B6') ? 'B6' : 'B5');
 const S = {generation: null, phase: 0, lives: 1, mini: {}, feedback: '', dev: false, done: false, lost: false, updatedAt: 0, hadError: false, storyFailed: {}, run: null, show: null, ultraLives: 1, selectedCount: 100};
 const API = CQ.game = {state: S};
 let library = CQ.store.read(K.LIB, []); if (!Array.isArray(library)) library = [];
@@ -198,6 +198,9 @@ function trickStage(s) {
   if (['title-close', 'title-minimize', 'title-maximize', 'logo-symbol', 'taskbar-start', 'version-click'].includes(mode)) return wrongBtns(alts || ['Nenhuma das anteriores', 'Todas as anteriores', 'Não sei responder', 'Pular esta etapa']);
   if (mode === 'save-trap') return `<div class="mini-panel"><div class="fake-dialog"><div class="fake-dialog-title">ClassiQuiz • Salvamento</div><div class="answers"><button type="button" class="answer-button" data-act="trick-wrong">Salvar meu progresso</button><button type="button" class="answer-button" data-act="trick-win">Não Salvar</button></div></div></div>`;
   if (mode === 'context-properties') return wrongBtns(['Abrir', 'Renomear', 'Excluir', 'Imprimir']);
+  if (mode === 'context-copy') return wrongBtns(['Recortar', 'Colar', 'Excluir', 'Renomear']);
+  if (mode === 'context-refresh') return wrongBtns(['Reiniciar', 'Fechar', 'Minimizar', 'Desligar']);
+  if (mode === 'context-info') return wrongBtns(['Executar', 'Mover', 'Compactar', 'Duplicar']);
   if (mode === 'click-red') return `<div class="answers">${[['Azul', '#346ed6'], ['Verde', '#31874d'], ['Vermelho', '#d83e45'], ['Amarelo', '#f0c44a']].map(([n, c]) => `<button type="button" class="color-answer ${n === 'Amarelo' ? 'yellow' : ''}" data-act="trick-wrong" style="background:${c}">${n}</button>`).join('')}</div>`;
   if (['click-number', 'click-dot', 'click-word'].includes(mode)) return wrongBtns(alts || (mode === 'click-number' ? [S.phase - 1, S.phase, S.phase + 2, S.phase + 3, S.phase + 4, S.phase + 5].filter(n => n > 0 && n !== S.phase + 1).slice(0, 4).map(String) : ['Nenhuma das anteriores', 'Todas as anteriores', 'Não sei responder', 'Pular esta etapa']));
   if (['drag-cover', 'drag-window'].includes(mode)) return `<div class="mini-panel"><p class="mini-caption">Segure e arraste a caixa usando o mouse ou o dedo.</p><div class="drag-scene"><div class="drag-reveal">${S.mini.revealed ? 'A resposta é 42' : '42'}<p>Agora escolha a alternativa.</p></div>${S.mini.revealed ? '' : `<div class="drag-object" data-drag="1"><strong>${mode === 'drag-cover' ? '▣' : '▤'}</strong><span>${mode === 'drag-cover' ? 'CAIXA' : 'JANELA'}</span><small>arraste</small></div>`}</div><div class="answers" style="margin-top:14px">${['24', '40', '42', '44'].map(t => `<button type="button" class="answer-button" data-act="drag-ans" data-value="${t}">${t}</button>`).join('')}</div></div>`;
@@ -392,6 +395,13 @@ const ACHIEVEMENTS = [
   ['g_desvio_win', 'Sem Saída? Sem Problema!', 'Alcançar o nível 25 de Desvio CQ.', s => s.desvioWin >= 1, 'jogos'],
   ['g_desvio_50', 'Meio Século', 'Alcançar o nível 50 de Desvio CQ.', s => s.desvio50 >= 1, 'jogos'],
   ['g_desvio_100', 'Centenário do Desvio', 'Alcançar o nível 100 de Desvio CQ.', s => s.desvio100 >= 1, 'jogos'],
+  ['offline_seen', 'Sem internet', 'Abrir o ClassiQuiz PWA sem conexão com a internet.', s => s.offlineSeen >= 1, 'jogos'],
+  ['runner_secret', 'Segredo desconectado', 'Descobrir o Offline Runner clicando no ícone triste da tela offline.', s => s.runnerSecret >= 1, 'secreta'],
+  ['runner_first', 'Primeiros passos', 'Alcançar 100 pontos no Offline Runner.', s => s.runner100 >= 1, 'jogos'],
+  ['runner_alert', 'Alerta vermelho', 'Desviar de 10 alertas de erro voadores no Offline Runner.', s => s.runnerFlyerDodge >= 10, 'jogos'],
+  ['runner_1000', 'Sem sinal, sem medo', 'Alcançar 1.000 pontos numa partida de Offline Runner.', s => s.runner1000 >= 1, 'jogos'],
+  ['runner_180', 'Intocável offline', 'Sobreviver por 3 minutos no Offline Runner sem colisão.', s => s.runner180 >= 1, 'jogos'],
+  ['runner_5000', 'Lenda offline', 'Alcançar 5.000 pontos numa partida de Offline Runner.', s => s.runner5000 >= 1, 'jogos'],
   ['g_pong', 'Rei da Quadra', 'Vencer uma partida de Pong.', s => s.pongWins >= 1, 'jogos'],
   ['secret1', 'Sem Pressa', 'Concluir um desafio de espera sem interferir.', s => s.patience >= 1, 'secreta'],
   ['secret2', 'Até o Fim', 'Concluir o desafio de 60 cliques.', s => s.clicked60 >= 1, 'secreta'],
@@ -424,7 +434,7 @@ function checkAchievements() { if (!canEarn()) return; for (const [id, , , done]
 API.stat = (k, n) => { stat(k, n); if (canEarn()) checkAchievements(); else saveAch(); };
 // Conquistas de programas (jogos de Mais opções): valem fora de partidas; bloqueadas por Terminal, tentativa de teste em andamento e Ultra ativo.
 const canEarnApp = () => !achievements.disabled && !CQ.rules.ultra() && !(S.dev && S.generation && !S.done && !S.lost);
-API.statApp = k => { if (!canEarnApp()) return; stat(k); for (const [id, , , done, cat] of ACHIEVEMENTS) if ((cat === 'jogos' || id === 'secret6') && !achievements.unlocked[id] && done(achievements.stats)) unlock(id); saveAch(); };
+API.statApp = k => { if (!canEarnApp()) return; stat(k); for (const [id, , , done, cat] of ACHIEVEMENTS) if ((cat === 'jogos' || id === 'secret6' || id === 'runner_secret') && !achievements.unlocked[id] && done(achievements.stats)) unlock(id); saveAch(); };
 API.achievementsState = () => achievements;
 function recordSuccess() {
   const s = cur(); if (!s) return; stat('correct'); if (S.run) S.run.correct++;
@@ -435,8 +445,8 @@ function recordSuccess() {
     if (s.kind === 'trick') { stat('tricks'); if (S.run) S.run.tricks++; const ids = achievements.stats.trickIds || []; if (!ids.includes(s.id)) { ids.push(s.id); achievements.stats.trickIds = ids; achievements.stats.uniqueTricks = ids.length; } }
     if (s.kind === 'memory' || s.kind === 'skip-memory') stat('memory');
     if (s.theme === 'observação') stat('observation');
-    if (s.mode === 'context-properties') stat('context');
-    if (['title-close', 'title-minimize', 'title-maximize', 'click-number', 'click-red', 'word-target'].includes(s.mode)) stat('hidden');
+    if (['context-properties','context-copy','context-refresh','context-info'].includes(s.mode)) stat('context');
+    if (['title-close', 'title-minimize', 'title-maximize', 'click-number', 'click-red', 'word-target','context-copy','context-refresh','context-info'].includes(s.mode)) stat('hidden');
     if (s.files || /folder|file|arquivo|pasta/.test(s.id)) stat('files');
     if (s.kind === 'story' && s.step > 1 && !S.storyFailed?.[s.group]) { const up = S.generation.stages[S.phase + 1]; if (!up || up.group !== s.group) stat('stories'); }
     if (isUltra()) { const n = S.generation.stages.slice(0, S.phase + 1).filter(q => q.kind !== 'skipped').length; achievements.stats.ultraBest = Math.max(achievements.stats.ultraBest || 0, n); achievements.stats.ultraBestRatio = Math.max(achievements.stats.ultraBestRatio || 0, n / S.generation.stages.filter(q => q.kind !== 'skipped').length); }
@@ -511,22 +521,51 @@ API.copy = copy;
 
 function renderEnd() {
   const g = S.generation; setGameTitle(S.done ? 'Trilha concluída' : 'Fim de jogo', `SEED ${g.seed}`, 'TENTATIVA FINALIZADA');
-  const msg = S.done ? (isUltra() ? 'ULTRA CLASSIQUIZ CONCLUÍDO!' : isCampaign() ? 'EDIÇÃO CONCLUÍDA!' : 'TRILHA CONCLUÍDA!') : 'PARTIDA ENCERRADA.'; const played = g.stages.filter(q => q.kind !== 'skipped').length;
+  const msg = S.done ? (isUltra() ? 'ULTRA CLASSIQUIZ CONCLUÍDO!' : isCampaign() ? 'EDIÇÃO CONCLUÍDA!' : 'TRILHA CONCLUÍDA!') : 'PARTIDA ENCERRADA.';
+  const played = g.stages.filter(q => q.kind !== 'skipped').length;
   const r = S.run || newRun(), min = Math.floor(r.ms / 60000), sec = Math.round(r.ms / 1000) % 60;
-  return `<div class="hero end-hero"><div class="end-mark">${S.done ? SV.star : SV.heartEmpty}</div><h1>${msg}</h1><p>Você ${S.done ? 'concluiu' : 'chegou à questão'} <b>${S.done ? g.count : S.phase + 1}</b> de <b>${g.count}</b>${isCampaign() ? ` na edição <b>ClassiQuiz ${g.campaign}</b>` : ''}.</p>
-    <dl class="retro" aria-label="Resumo da tentativa"><div><dt>Acertos</dt><dd>${r.correct}</dd></div><div><dt>Erros</dt><dd>${r.errors}</dd></div><div><dt>Corações perdidos</dt><dd>${r.heartsLost}</dd></div><div><dt>Pegadinhas</dt><dd>${r.tricks}</dd></div><div><dt>Minigames</dt><dd>${r.minis}</dd></div><div><dt>Missões</dt><dd>${r.missions}</dd></div><div><dt>Tempo jogado</dt><dd>${min}min ${String(sec).padStart(2, '0')}s</dd></div></dl>
-    ${S.dev ? '<p class="muted">Esta foi uma tentativa de teste: sem recordes, moedas ou conquistas.</p>' : ''}
-    <div class="callout" style="margin:19px auto;max-width:470px;overflow-wrap:anywhere">${isCampaign() ? 'Edição' : 'Seed'}: <b>${E(g.seed)}</b><br>${g.count !== played ? `Esta Trilha tinha ${played} desafios jogáveis em ${g.count} posições numeradas.<br>` : ''}Ao reiniciar, a sequência será exatamente a mesma.</div>
-    <div class="actions" style="justify-content:center"><button type="button" class="chrome-button primary" data-act="restart">↻ Tentar a mesma ${isCampaign() ? 'edição' : 'Trilha'}</button><button type="button" class="chrome-button" data-act="home">Menu</button><button type="button" class="chrome-button" data-act="copy-seed">Copiar seed</button></div></div>`;
+  const countText = g.count !== played ? `Esta Trilha tinha ${played} desafios jogáveis em ${g.count} posições numeradas.` : '';
+  return `<div class="hero end-hero">
+    <div class="end-heading"><div class="end-mark">${S.done ? SV.star : SV.heartEmpty}</div><h1>${msg}</h1>
+      <p>Você ${S.done ? 'concluiu' : 'chegou à questão'} <b>${S.done ? g.count : S.phase + 1}</b> de <b>${g.count}</b>${isCampaign() ? ` na edição <b>ClassiQuiz ${g.campaign}</b>` : ''}.</p></div>
+    <dl class="retro end-stats" aria-label="Resumo da tentativa"><div><dt>Acertos</dt><dd>${r.correct}</dd></div><div><dt>Erros</dt><dd>${r.errors}</dd></div><div><dt>Corações perdidos</dt><dd>${r.heartsLost}</dd></div><div><dt>Pegadinhas</dt><dd>${r.tricks}</dd></div><div><dt>Minigames</dt><dd>${r.minis}</dd></div><div><dt>Missões</dt><dd>${r.missions}</dd></div><div><dt>Tempo jogado</dt><dd>${min}min ${String(sec).padStart(2, '0')}s</dd></div></dl>
+    ${S.dev ? '<p class="muted end-dev-warning">Esta foi uma tentativa de teste: sem recordes, moedas ou conquistas.</p>' : ''}
+    <div class="callout end-seed"><span>${isCampaign() ? 'Edição' : 'Seed'}: <b>${E(g.seed)}</b></span><span class="end-seed-detail">${countText ? `<br>${countText}` : ''}<br>Ao reiniciar, a sequência será exatamente a mesma.</span><span class="end-seed-short">${countText ? `${played} desafios em ${g.count} posições. ` : ''}A mesma sequência será repetida.</span></div>
+    <div class="actions end-actions" role="group" aria-label="Próximas ações"><button type="button" class="chrome-button primary" data-act="restart">↻ Tentar a mesma ${isCampaign() ? 'edição' : 'Trilha'}</button><button type="button" class="chrome-button" data-act="home">Menu</button><button type="button" class="chrome-button" data-act="copy-seed">Copiar seed</button></div>
+  </div>`;
 }
 CQ.apps.game = {title: 'ClassiQuiz', icon: 'assets/icons/classiquiz.svg', bodyClass: 'page', persistent: false, maxDefault: true, noStatus: false,
   render(w) {
     if (!w._bound) { w.body.addEventListener('click', bodyClick); w._bound = true; }
+    w.body.classList.toggle('end-screen-body', !!(S.generation && (S.done || S.lost)));
     w.body.innerHTML = !S.generation ? renderGame() : (S.done || S.lost) ? renderEnd() : renderGame(); bindUnique(w); updateWaitClock();
     if (!S.generation) { w.setTitle('ClassiQuiz'); w.setStatus('Sem partida', ''); }
   },
   onClose() { clearInterval(tickTimer); CQ.missions?.pause?.(); },
-  contextMenu(target) { return null; }
+  contextMenu(target) {
+    const s=cur(), active=!!s && !S.mini.solved && !S.done && !S.lost && WM.isVisible('game');
+    const inside=!!target.closest('.game-stage,.show-stage') || !!target.closest('.question-text');
+    const normal=[
+      {label:'Copiar enunciado', run:()=>copy(s?.text || '')},
+      {label:'Inspecionar questão', run:()=>CQ.ui.alert('Propriedades da questão', `<p>Número: ${S.phase+1}</p><p>Banco: ${E(S.generation?.bank||'-')}</p>`)},
+      {sep:true},{label:'Voltar ao menu',run:()=>OS.open('new')}
+    ];
+    if(!active || !inside)return normal;
+    const special={
+      'context-copy':{label:'Copiar',run:()=>success('Você descobriu o comando Copiar pelo botão direito!')},
+      'context-refresh':{label:'Atualizar',run:()=>success('O menu contextual trouxe a resposta!')},
+      'context-info':{label:'Propriedades',run:()=>success('Você encontrou as propriedades no menu!')},
+      'context-properties':{label:'Propriedades',run:()=>success('Você encontrou as propriedades no menu!')}
+    }[s.mode];
+    if(!special)return normal;
+    // A resposta existe apenas neste menu: nenhuma alternativa visível é correta.
+    const items = s.mode === 'context-copy' ? [
+      {label:'Recortar',run:()=>failure('Recortar não é copiar: o original seria removido.')}, special,
+      {label:'Colar',run:()=>failure('Colar insere o conteúdo existente na área de transferência.')},
+      {label:'Selecionar tudo',run:()=>failure('Selecionar não copia o conteúdo.')}
+    ] : [{label:'Abrir',run:()=>failure('Essa opção não resolve a pergunta.')},special,{label:'Copiar',run:()=>failure('Essa opção não resolve a pergunta.')},{sep:true},{label:'Ajuda',run:()=>CQ.notify('Explore as opções do menu contextual.')}];
+    return items;
+  }
 };
 CQ.apps.resume = {title: 'Continuar', icon: 'assets/icons/continuar.svg', beforeOpen() {
   if (!S.generation || S.done || S.lost) { CQ.notify('Não há partida em andamento.'); return false; }
@@ -610,7 +649,7 @@ CQ.apps.achievements = {title: 'Conquistas', icon: 'assets/icons/conquistas.svg'
     w.body.innerHTML = `<section class="ach-page"><div class="ach-summary"><h1>Conquistas</h1><strong>${got} / ${total}</strong></div>
       ${achievements.disabled ? '<div class="achievement-paused" role="status">Conquistas desativadas neste dispositivo (Terminal usado). Para reativar, use “Resetar conquistas” em Configurações ou no próprio Terminal.</div>' : ''}
       <p class="muted">Erros: ${s.errors || 0} • Derrotas: ${s.losses || 0} • Acertos: ${s.correct || 0} • Vitórias: ${s.wins || 0}</p>
-      ${Object.entries(groups).map(([k, label]) => `<h2 class="ach-group">${label}</h2><div class="ach-grid">${ACHIEVEMENTS.filter(a => a[4] === k).map(([id, name, desc]) => { const un = !!achievements.unlocked[id], hid = id.startsWith('secret') && !un; return `<div class="ach-item ${un ? 'ach-unlocked' : ''}"><div class="ach-pict">${un ? '★' : '◇'}</div><div><strong>${hid ? '???' : E(name)}</strong><small>${hid ? 'Conquista secreta' : E(desc)}</small>${un ? `<small>Desbloqueada em ${new Date(achievements.unlocked[id]).toLocaleDateString('pt-BR')}</small>` : ''}</div></div>`; }).join('')}</div>`).join('')}</section>`;
+      ${Object.entries(groups).map(([k, label]) => `<h2 class="ach-group">${label}</h2><div class="ach-grid">${ACHIEVEMENTS.filter(a => a[4] === k).map(([id, name, desc]) => { const un = !!achievements.unlocked[id], hid = (id.startsWith('secret') || id === 'runner_secret') && !un; return `<div class="ach-item ${un ? 'ach-unlocked' : ''}"><div class="ach-pict">${un ? '★' : '◇'}</div><div><strong>${hid ? '???' : E(name)}</strong><small>${hid ? 'Conquista secreta' : E(desc)}</small>${un ? `<small>Desbloqueada em ${new Date(achievements.unlocked[id]).toLocaleDateString('pt-BR')}</small>` : ''}</div></div>`; }).join('')}</div>`).join('')}</section>`;
   }};
 
 // ---------- inicialização ----------

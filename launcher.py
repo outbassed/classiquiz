@@ -34,7 +34,7 @@ if __name__ == '__main__':
             sys.exit(1)
     else:
         with httpd:
-            print('ClassiQuiz 2.0.8: ' + url)
+            print('ClassiQuiz 2.0.9: ' + url)
             print('Deixe esta janela aberta enquanto joga. Ctrl+C para encerrar.')
             threading.Timer(0.7, lambda: webbrowser.open(url)).start()
             try:

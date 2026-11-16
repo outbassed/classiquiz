@@ -43,7 +43,7 @@ try {
 
 Write-Host ''
 Write-Host '=========================================='
-Write-Host '            CLASSIQUIZ 2.0.8'
+Write-Host '            CLASSIQUIZ 2.0.9'
 Write-Host '=========================================='
 Write-Host "Jogo disponivel em: $url"
 Write-Host 'Deixe esta janela aberta enquanto joga.'

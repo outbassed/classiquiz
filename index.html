@@ -6,11 +6,13 @@
 <meta name="theme-color" content="#14577f">
 <meta name="description" content="ClassiQuiz: perguntas, pegadinhas e minigames, rodando no ClaQui OS, um desktop retrô original.">
 <link rel="icon" href="assets/classiquiz-icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/os.css">
 <link rel="stylesheet" href="assets/css/apps.css">
 <link rel="stylesheet" href="assets/css/mouse.css">
-<title>ClassiQuiz 2.0.8 | Um clássico que nunca existiu</title>
+<title>ClassiQuiz 2.0.9 | Um clássico que nunca existiu</title>
 <!-- Olá, curioso(a)! Este HTML é todo do jogo. Nenhuma pergunta depende de você inspecionar nada. Mas o Claquim gosta de visitas. -->
 <script defer src="assets/js/core.js"></script>
 <script defer src="assets/js/vfs.js"></script>
@@ -25,6 +27,7 @@
 <script defer src="assets/js/data-b6.js"></script>
 <script defer src="assets/js/campaigns-b6.js"></script>
 <script defer src="assets/js/gen-b6.js"></script>
+<script defer src="assets/js/gen-b7.js"></script>
 <script defer src="assets/js/app.js"></script>
 <script defer src="assets/js/missions.js"></script>
 <script defer src="assets/js/apps-system.js"></script>
@@ -34,7 +37,11 @@
 <script defer src="assets/js/apps-games.js"></script>
 <script defer src="assets/js/apps-desvio.js"></script>
 <script defer src="assets/js/system-effects.js"></script>
+<script defer src="assets/js/offline-runner.js"></script>
+<script defer src="assets/js/apps-runner.js"></script>
+<script defer src="assets/js/pwa.js"></script>
 <script defer src="assets/js/main.js"></script>
+<script defer src="assets/js/touchpad.js"></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -61,7 +68,7 @@
     <button type="button" class="start-button" id="start-button" data-act="start-toggle" aria-expanded="false" aria-haspopup="menu"><img src="assets/classiquiz-icon.svg" alt=""><span>Start</span></button>
     <button type="button" class="task-icon" data-act="icon-logo" title="Mostrar a área de trabalho" aria-label="Mostrar a área de trabalho"><img src="assets/classiquiz-icon.svg" alt=""></button>
     <div class="task-programs" id="task-programs" role="group" aria-label="Programas abertos"></div>
-    <button type="button" class="task-version" data-act="version-click" title="Sobre a versão">v2.0.8</button>
+    <button type="button" class="task-version" data-act="version-click" title="Sobre a versão">v2.0.9</button>
     <button type="button" id="task-clock" class="task-clock" title="Horário do dispositivo" tabindex="-1">--:--</button>
   </footer>
   <div id="cq-context" class="cq-context" role="menu" aria-label="Menu de contexto" hidden></div>

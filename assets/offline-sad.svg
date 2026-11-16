@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 128 128" role="img" aria-labelledby="title desc" shape-rendering="crispEdges">
+<title id="title">ClassiQuiz sem internet</title>
+<desc id="desc">Janela clássica em cinza com rosto triste pixelado.</desc>
+<g id="shadow">
+  <path fill="#9D9D9D" d="M27 11H119V117H19V30H22V23H27Z"/>
+  <path fill="#A1A1A1" d="M18 32H20V116H118V118H18Z" opacity=".75"/>
+</g>
+<g id="window-frame">
+  <path fill="#B0B0B0" d="M24 6H115V112H12V27H16V21H20V13H24Z"/>
+  <path fill="#FFFFFF" d="M24 6H114V9H26V11H23V15H20V22H16V29H15V108H12V27H16V21H20V13H24Z"/>
+  <path fill="#CFCFCF" d="M27 10H110V106H18V27H22V18H27Z"/>
+  <path fill="#C3C3C3" d="M20 104H111V11H114V109H19V106H20Z"/>
+  <path fill="#D4D4D4" d="M21 18H110V39H21Z"/>
+</g>
+<g id="title-bar">
+  <rect x="21" y="18" width="89" height="20" fill="#A1A1A1"/>
+  <rect x="21" y="18" width="89" height="2" fill="#A8A8A8"/>
+  <rect x="21" y="37" width="89" height="1" fill="#9F9F9F"/>
+</g>
+<g id="controls" stroke-linejoin="miter">
+  <g id="minimize">
+    <rect x="63" y="22" width="13" height="13" fill="#9D9D9D"/>
+    <rect x="62" y="21" width="13" height="13" fill="#D6D6D6"/>
+    <path d="M64 23H73V32H64Z" fill="#CBCBCB"/>
+    <rect x="64" y="29" width="7" height="2" fill="#111111"/>
+    <path d="M62 21H75V23H64V34H62Z" fill="#FFFFFF"/>
+    <path d="M75 21V34H62V32H73V23H75Z" fill="#B4B4B4"/>
+  </g>
+  <g id="maximize">
+    <rect x="80" y="22" width="13" height="13" fill="#9D9D9D"/>
+    <rect x="79" y="21" width="13" height="13" fill="#D6D6D6"/>
+    <path d="M81 23H90V32H81Z" fill="#CBCBCB"/>
+    <rect x="83" y="25" width="6" height="6" fill="#111111"/>
+    <rect x="84" y="27" width="4" height="3" fill="#D4D4D4"/>
+    <path d="M79 21H92V23H81V34H79Z" fill="#FFFFFF"/>
+    <path d="M92 21V34H79V32H90V23H92Z" fill="#B4B4B4"/>
+  </g>
+  <g id="close">
+    <rect x="97" y="22" width="13" height="13" fill="#9D9D9D"/>
+    <rect x="96" y="21" width="13" height="13" fill="#D6D6D6"/>
+    <path d="M98 23H107V32H98Z" fill="#CBCBCB"/>
+    <path d="M99 25L101 25L103 27L105 25L107 25L107 27L105 29L107 31L105 31L103 29L101 31L99 31L99 29L101 27L99 25Z" fill="#9C9C9C"/>
+    <path d="M96 21H109V23H98V34H96Z" fill="#FFFFFF"/>
+    <path d="M109 21V34H96V32H107V23H109Z" fill="#B4B4B4"/>
+  </g>
+</g>
+<g id="content-panel">
+  <rect x="21" y="40" width="89" height="69" fill="#B8B8B8"/>
+  <path d="M23 42H108V106H23Z" fill="#D5D5D5"/>
+  <path d="M26 45H105V103H26Z" fill="#CACACA"/>
+  <path d="M26 45H105V48H26Z" fill="#CFCFCF"/>
+  <rect x="26" y="48" width="79" height="55" fill="#CBCBCB"/>
+  <path d="M23 42H108V44H25V106H23Z" fill="#B0B0B0"/>
+  <path d="M108 42V106H23V104H106V44H108Z" fill="#D8D8D8"/>
+</g>
+<g id="sad-face" fill="#A8A8A8">
+  <rect x="42" y="60" width="12" height="13"/><rect x="76" y="60" width="12" height="13"/>
+  <rect x="51" y="89" width="7" height="5"/><rect x="58" y="84" width="7" height="5"/>
+  <rect x="65" y="82" width="8" height="5"/><rect x="73" y="84" width="7" height="5"/>
+  <rect x="80" y="89" width="6" height="5"/>
+</g>
+</svg>

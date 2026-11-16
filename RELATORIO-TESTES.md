@@ -1,3 +1,25 @@
+## Adendo 2.0.9 — 16/11/2026 (ambiente desta entrega)
+
+A documentação histórica abaixo refere-se a outros ambientes e versões, e não deve ser confundida com testes executados nesta entrega.
+
+**Testes de Node efetivamente executados nesta entrega (todos passaram):**
+
+| Comando | Resultado |
+|---|---|
+| `node tests/b6.test.js` | 14.941 verificações, sem falhas |
+| `node tests/legacy-seeds.test.js` | 357 verificações, nenhuma seed antiga alterada |
+| `node tests/ttt.test.js` | 2.609 verificações, sem falhas |
+| `node tests/vfs-204.test.js` | Passou |
+| `node tests/calc-205.test.js` | 21 verificações, sem falhas |
+| `node tests/bsod-205.test.js` | Passou |
+| `node tests/desvio-207.test.js` | 124 verificações, sem falhas |
+| `node tests/mouse-206.test.js` | 385 verificações, sem falhas |
+| `node tests/v209.test.js` | 15.804 verificações: 630 Trilhas B7, IA X/O, fraude, conquistas offline, recursos PWA |
+
+**Verificações de estrutura:** JavaScript validado com `node --check`; arquivos do manifest presentes; os ícones possuem assinatura PNG válida; cache offline não inclui os arquivos do ClaQui OS. Testes de lógica não substituem o teste manual de interação, tela de toque ou de conexão real.
+
+**Limitação:** o Chromium automatizado do ambiente bloqueia a navegação para a página local. Portanto **nenhuma validação visual E2E completa da 2.0.9 foi considerada aprovada**. Ainda é necessário testar no navegador do PC e do celular a troca de janela, o touchpad, o layout, a instalação PWA e o fallback offline.
+
 # Relatório de testes — ClassiQuiz 2.0.0 (ClaQui OS)
 
 Este relatório diz **o que foi realmente executado**, com o resultado de cada comando, e o que **não** foi testado. Nenhuma captura de tela é simulada: todas em `tests/capturas/` foram tiradas pelo Chrome real durante as suítes E2E.

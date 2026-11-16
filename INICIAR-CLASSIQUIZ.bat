@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-title ClassiQuiz 2.0.8 - Inicializador
+title ClassiQuiz 2.0.9 - Inicializador
 
 echo.
 echo ==========================================
-echo             CLASSIQUIZ 2.0.8
+echo             CLASSIQUIZ 2.0.9
 echo ==========================================
 echo.
 

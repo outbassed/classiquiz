@@ -1,5 +1,16 @@
 # CHANGELOG — ClassiQuiz × ClaQui OS
 
+## 2.0.9 — 16/11/2026 — "PWA e ClaQui OS completo"
+- **Janela cheia por padrão:** todos os programas abrem maximizados dentro do desktop e mantêm minimizar/restaurar/fechar. Confirmações e alertas não são janelas maximizadas.
+- **Responsividade:** tela final da Trilha compactada, resultados e seed acessíveis; botões "Tentar a mesma Trilha", "Menu" e "Copiar seed" visíveis em celulares. TTT e minijogos adaptados a alturas pequenas e paisagem; a barra de tarefas continua fixa.
+- **Jogo da Velha:** configuração salva para X/O humano e início por jogador, máquina ou sorteio 50/50. IA Minimax e modo Ladrão funcionam com ambos os símbolos; a peça ilegal fora da grade ainda pode ser contestada. Placar antigo e distribuição dos modos preservados.
+- **Menu de contexto:** opção dinâmica por tela e aplicativo, sem usar menu do desktop dentro de programa; suporte a toque prolongado e touchpad. Novas questões tipo contexto do **banco B7**, com resposta no menu de botão direito, sem gabarito nas alternativas. B1–B6 e seeds antigas continuam intactas.
+- **Touchpad virtual:** opcional, só em dispositivo de toque, desativado por padrão. Sensibilidade, opacidade, posição, dobrar/recolher, clique direito, segurar para arrastar, rolagem com dois dedos.
+- **PWA dependente da internet:** manifest, ícones 192/512 e `sw.js` com cache **restrito à tela offline e ao Offline Runner**. Tela com globo e ícone ClassiQuiz triste cinza; ao voltar a conexão, tenta recarregar, respeitando partida do Runner em andamento.
+- **ClaQui Offline Runner:** arcade autoral com obstáculos de arquivos/sinal e alertas de erro voadores, modo de abaixar, recordes locais, disponível na tela offline (ícone secreto), Mais opções e Iniciar. Sete conquistas incluindo "Sem internet" e a secreta "Segredo desconectado".
+- **ClaQui Update:** consulta `version.json` online sem cache, exibe histórico e versão disponível, recarrega somente após confirmação. Não afirma baixar/atualizar o pacote .bat.
+- **Regressão:** `node tests/v209.test.js` com 15.804 verificações, incluindo 630 seeds B7, IA X/O e conquistas offline; demais oito suítes Node passaram. A validação E2E gráfica permanece pendente por bloqueio do Chromium do ambiente.
+
 ## 2.0.8 — 15/11/2026 — "Mouse corrigido, Start rolável e Desvio sem fim"
 - **Mouse de verdade:** corrigido o erro de caminho relativo que fazia o CSS procurar cursores na pasta errada. URLs agora são absolutas, resolvidas a partir do HTML. Acrescentados 180 PNGs compatíveis com o Chrome, com fallback para os 180 SVGs existentes. Mudanças de esquema, tamanho e papel individual continuam sendo aplicadas sem reiniciar. Incluída área de teste para Normal, Link, Texto e Ocupado nas Configurações.
 - **Menu Iniciar:** rolagem vertical restrita à lista de programas, grupos Principal/Jogos/Acessórios/Sistema, todos os aplicativos acessíveis, novos apps incorporados automaticamente; ações Desligar e Reiniciar ficam fixas no rodapé. O Terminal permanece exclusivo do menu Iniciar e não aparece no Ultra.

@@ -1,10 +1,10 @@
 {
   "name": "classiquiz-testes",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "private": true,
   "description": "Testes do ClassiQuiz / ClaQui OS: Node (bancos, seeds) e E2E em Chrome real (Playwright). Não faz parte do jogo.",
   "scripts": {
-    "test:node": "node b6.test.js && node legacy-seeds.test.js && node ttt.test.js && node vfs-204.test.js && node calc-205.test.js && node bsod-205.test.js && node desvio-207.test.js && node mouse-206.test.js",
+    "test:node": "node b6.test.js && node legacy-seeds.test.js && node ttt.test.js && node vfs-204.test.js && node calc-205.test.js && node bsod-205.test.js && node desvio-207.test.js && node mouse-206.test.js && node v209.test.js",
     "test:e2e": "node e2e/run-all.js",
     "test:e2e:longos": "node e2e/run-all.js --longos"
   },

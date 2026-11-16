@@ -49,7 +49,7 @@ OS.ctx = {
   show(x, y, items) {
     const m = $('cq-context'); if (!m) return; const s = OS.scale();
     m.innerHTML = items.map((it, i) => it.sep ? '<hr>' : `<button type="button" role="menuitem" data-ctx-i="${i}" ${it.disabled ? 'disabled' : ''}>${it.icon ? `<img src="${E(it.icon)}" alt="">` : '<span></span>'}${E(it.label)}</button>`).join('');
-    m._items = items; m.hidden = false;
+    m._items = items; m.hidden = false; closeStart();
     const w = m.offsetWidth || 220, h = m.offsetHeight || 180, A = $('app'), maxW = A.clientWidth, maxH = A.clientHeight;
     m.style.left = Math.max(2, Math.min(x / s, maxW - w - 4)) + 'px'; m.style.top = Math.max(2, Math.min(y / s, maxH - h - 4)) + 'px';
     m.querySelector('button:not(:disabled)')?.focus({preventScroll: true});
@@ -69,15 +69,30 @@ function defaultContext(e) {
 document.addEventListener('contextmenu', e => {
   if (e.ctrlKey) return;                                     // Ctrl + botão direito: menu nativo do navegador
   if (e.defaultPrevented) return;
-  if (e.target.closest('input,textarea,select,[contenteditable="true"]')) return;
   e.preventDefault(); openContextAt(e.clientX, e.clientY, e.target);
 });
 function openContextAt(x, y, target) {
-  const host = target?.closest?.('[data-ctxapp]'); const def = host && CQ.apps[host.dataset.ctxapp];
+  if (!target || target.closest('#cq-context')) return;
+  const field = target.closest('input,textarea,[contenteditable="true"]');
+  if (field) {
+    const copy = () => {try { document.execCommand('copy'); } catch {}}, paste = async () => {
+      try {const t=await navigator.clipboard.readText();field.focus();if(field.setRangeText)field.setRangeText(t,field.selectionStart,field.selectionEnd,'end');else document.execCommand('insertText',false,t);field.dispatchEvent(new Event('input',{bubbles:true}));} catch {CQ.notify('O navegador não permitiu colar.');}
+    };
+    OS.ctx.show(x,y,[{label:'Copiar',run:copy},{label:'Colar',run:paste},{label:'Selecionar tudo',run:()=>{field.focus();field.select?.();}}]);return;
+  }
+  const host = target.closest('[data-ctxapp]'); const def = host && CQ.apps[host.dataset.ctxapp];
   let items = null;
   try { items = def?.contextMenu?.(target, host) || null; } catch (err) { console.error(err); }
+  // O menu do desktop nunca deve aparecer dentro de uma janela.
+  if(!items && host)items = [
+    {label:'Atualizar janela',run:()=>OS.wm.refresh(host.dataset.ctxapp)},
+    {label:'Minimizar',run:()=>OS.wm.minimize(host.dataset.ctxapp)},
+    {sep:true},{label:'Fechar',run:()=>OS.wm.requestClose(host.dataset.ctxapp)}
+  ];
+  if(!items && target.closest('#start-menu,#taskbar,.taskbar'))items = [{label:'Mostrar área de trabalho',run:()=>OS.wm.list().forEach(w=>OS.wm.minimize(w.id))}];
   OS.ctx.show(x, y, items || defaultContext());
 }
+OS.ctx.openAt = openContextAt;
 document.addEventListener('click', e => {
   const b = e.target.closest('#cq-context [data-ctx-i]');
   if (b) { const m = $('cq-context'), it = m._items?.[Number(b.dataset.ctxI)]; OS.ctx.hide(); try { it?.run?.(); } catch (err) { console.error(err); } return; }
@@ -108,7 +123,7 @@ const WM = OS.wm = {
     el.setAttribute('aria-label', def.title || appId);
     el.innerHTML = `<div class="win-title"><div class="title-left"><img class="win-icon" alt=""><span class="win-name"></span></div><div class="window-controls"><button type="button" data-act="win-min" data-win="${appId}" title="Minimizar" aria-label="Minimizar janela"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="8" width="7" height="2.2"/></svg></button><button type="button" data-act="win-max" data-win="${appId}" title="Maximizar ou restaurar" aria-label="Maximizar ou restaurar janela"><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="2" width="8" height="8" fill="none" stroke-width="1.8"/><rect x="2" y="2" width="8" height="2.4"/></svg></button><button type="button" data-act="win-close" data-win="${appId}" title="Fechar janela" aria-label="Fechar janela"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5l7 7m0-7l-7 7" fill="none" stroke-width="2"/></svg></button></div></div><div class="win-body ${def.bodyClass || ''}" tabindex="-1"></div><div class="win-status"${def.noStatus ? ' hidden' : ''}><span class="s-left"></span><span class="s-right"></span></div>`;
     $('windows').appendChild(el);
-    w = {id: appId, appId, el, body: el.querySelector('.win-body'), titleEl: el.querySelector('.win-name'), iconEl: el.querySelector('.win-icon'), params, minimized: false, maximized: def.maxDefault !== false, data: {}, openedAt: Date.now(),
+    w = {id: appId, appId, el, body: el.querySelector('.win-body'), titleEl: el.querySelector('.win-name'), iconEl: el.querySelector('.win-icon'), params, minimized: false, maximized: true, data: {}, openedAt: Date.now(),
       setTitle(t) { this.titleEl.textContent = t; this.el.setAttribute('aria-label', t); updateTaskbar(); }, setStatus(l, r) { const a = el.querySelector('.s-left'), b = el.querySelector('.s-right'); if (l != null) a.textContent = l; if (r != null) b.textContent = r; },
       setIcon(src) { this.iconEl.src = src; }};
     w.setIcon(def.icon || 'assets/classiquiz-icon.svg'); w.titleEl.textContent = def.title || appId;
@@ -198,9 +213,9 @@ OS.ultraBlocked = id => id === 'dev' && CQ.rules.ultra();
 function startItems() {
   const sections = [
     ['Principal', [['new','Jogar'],['resume','Continuar'],['library','Minhas Trilhas'],['ultra','Ultra ClassiQuiz'],['mais','Mais opções']]],
-    ['Jogos', [['mines','Campo Minado'],['ttt','Jogo da Velha'],['snake','Cobrinha'],['desvio','Desvio CQ'],['pong','Pong']]],
+    ['Jogos', [['mines','Campo Minado'],['ttt','Jogo da Velha'],['snake','Cobrinha'],['desvio','Desvio CQ'],['runner','Offline Runner'],['pong','Pong']]],
     ['Acessórios', [['notepad','Bloco de Notas'],['paint','Paint'],['calc','Calculadora'],['calendar','Calendário'],['clock','Relógio'],['viewer','Visualizador'],['player','Reprodutor']]],
-    ['Sistema e biblioteca', [['explorer','Explorador de Arquivos'],['trash','Lixeira'],['settings','Configurações'],['achievements','Conquistas'],['rewards','Recompensas'],['stats','Estatísticas'],['favorites','Favoritas'],['updates','Atualizações'],['about','Sobre']]]
+    ['Sistema e biblioteca', [['explorer','Explorador de Arquivos'],['trash','Lixeira'],['settings','Configurações'],['achievements','Conquistas'],['rewards','Recompensas'],['stats','Estatísticas'],['favorites','Favoritas'],['updates','ClaQui Update'],['about','Sobre']]]
   ];
   // Programas novos entram automaticamente no menu, sem exigir alterar a lista.
   const listed = new Set(sections.flatMap(([,list]) => list.map(([id]) => id)));
@@ -242,7 +257,7 @@ document.addEventListener('click', e => {
     case 'open-app': if (btn.classList.contains('desktop-shortcut') && e.detail > 0) shield = {until: performance.now() + 500, x: e.clientX, y: e.clientY}; OS.open(btn.dataset.app, btn.dataset.param ? JSON.parse(btn.dataset.param) : undefined); return;
     case 'start-toggle': toggleStart(); return;
     case 'icon-logo': showDesktopToggle(); return;
-    case 'version-click': CQ.ui.alert('Sobre o ClaQui OS', `<p><b>ClaQui OS ${CQ.VERSION}</b> — sistema fictício que roda no seu navegador.</p><p>Jogo: <b>ClassiQuiz</b> — UM CLÁSSICO QUE NUNCA EXISTIU.</p><p class="muted">Frontend puro, local e sem internet obrigatória.</p>`); return;
+    case 'version-click': CQ.ui.alert('Sobre o ClaQui OS', `<p><b>ClaQui OS ${CQ.VERSION}</b> — sistema fictício que roda no seu navegador.</p><p>Jogo: <b>ClassiQuiz</b> — UM CLÁSSICO QUE NUNCA EXISTIU.</p><p class="muted">Frontend puro • versão publicada online e edição local para Windows.</p>`); return;
     case 'power-shutdown': closeStart(); OS.power('shutdown'); return;
     case 'power-restart': closeStart(); OS.power('restart'); return;
   }
