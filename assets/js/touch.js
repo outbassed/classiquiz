@@ -9,7 +9,7 @@ touch.buttonsOn = () => CQ.sys.get('touchButtons') === true;
 touch.apply = () => { const a = document.getElementById('app'); if (a) a.dataset.touchbtn = touch.buttonsOn() ? 'on' : 'off'; };
 touch.toggleHtml = () => '<button type="button" class="chrome-button tiny tb-toggle" data-touchbtn-toggle aria-pressed="false" title="Mostrar ou ocultar botões de direção na tela">🎮 Botões na tela</button>';
 document.addEventListener('click', e => { const b = e.target.closest('[data-touchbtn-toggle]'); if (!b) return; CQ.sys.set({touchButtons: !touch.buttonsOn()}); touch.apply(); document.querySelectorAll('[data-touchbtn-toggle]').forEach(x => x.setAttribute('aria-pressed', String(touch.buttonsOn()))); });
-CQ.bus.on('sys:change', p => { if ('touchButtons' in p) touch.apply(); });
+CQ.bus.on('sys:change', p => { if (p && typeof p === 'object' && 'touchButtons' in p) touch.apply(); });
 CQ.bus.on('desktop:ready', touch.apply); touch.apply();
 // Detecta gestos de deslizar em `el` e chama onDir([dx,dy]) (cardinal). Encadeia vários gestos no mesmo toque. Bloqueia a rolagem da página.
 touch.swipe = (el, onDir, {min = 20, onTap = null} = {}) => {

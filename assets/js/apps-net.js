@@ -79,7 +79,7 @@ A.netconfig = {title: 'Configurações de Rede', icon: 'assets/icons/rede.svg', 
     w.setTitle('Configurações de Rede'); w._draw = draw; draw();
     if (!w._bound) { w._bound = true;
       w.body.addEventListener('change', e => { const k = e.target.dataset.netOpt; if (k) { CQ.sys.set({[k]: !!e.target.checked}); } });
-      w._off = [CQ.bus.on('net:change', draw), CQ.bus.on('sys:change', p => { if ('fastEffects' in p || 'netDial' in p) { /* sem redesenho: preserva foco */ } })];
+      w._off = [CQ.bus.on('net:change', draw), ];
       w._iv = setInterval(() => { if (!net.online || w.minimized) return; traffic.tx += 1 + Math.floor(Math.random() * 3); traffic.rx += 1 + Math.floor(Math.random() * 6); const a = w.body.querySelector('#net-tx'), b = w.body.querySelector('#net-rx'); if (a) a.textContent = traffic.tx; if (b) b.textContent = traffic.rx; }, 900);
       window.addEventListener('online', draw); window.addEventListener('offline', draw);
     }

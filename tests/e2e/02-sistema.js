@@ -5,7 +5,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const S = L.suite('E2E sistema'); const t = await L.start(); await L.boot(t); const p = t.page;
   // ---------- área de trabalho ----------
   const sc = await p.evaluate(() => [...document.querySelectorAll('.desktop-shortcut')].map(b => ({app: b.dataset.app, label: b.querySelector('.sc-label').textContent.trim(), ultra: b.classList.contains('ultra-shortcut')})));
-  S.ok(sc.length === 9, 'área de trabalho: 8 atalhos + Ultra (' + sc.length + ')');
+  S.ok(sc.length === 10, 'área de trabalho: 8 atalhos + Ultra + ClaQui Browser (' + sc.length + ')');
   const labels = sc.filter(s => !s.ultra).map(s => s.label); for (const l of ['Jogar', 'Continuar', 'Minhas Trilhas', 'Conquistas', 'Configurações', 'Recompensas', 'Sobre', 'Mais opções']) S.ok(labels.includes(l), 'atalho: ' + l);
   S.ok(sc.find(s => s.ultra)?.label === 'Ultra ClassiQuiz', 'Ultra separado à direita');
   const ux = await p.evaluate(() => { const u = document.querySelector('.ultra-shortcut').getBoundingClientRect(), c = document.querySelector('.desktop-center-panel').getBoundingClientRect(); return u.left >= c.right - 2; });
