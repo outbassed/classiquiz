@@ -17,11 +17,11 @@ async function exercise(cause) {
   const CQ = {
     apps: {calc: {}}, mono: () => now, game: {persist: () => {persisted++;}}, ui: {closeModal: () => {}},
     vfs: {ensureSystem: () => {ensured++;}},
-    bus: {emit: (name) => signals.push(name)}, notify: () => {}
+    bus: {emit: (name) => signals.push(name)}, notify: () => {}, clock: {osName: () => 'ClaQui 26'}   // 26nov16: a tela azul mostra o nome dinâmico do sistema
   };
   const WM = {list: () => [{id: 'calc'}], closeAll: () => {closed++;}};
   const OS = {ctx: {hide: () => {}}, bootSequence: async () => {booted++;}};
-  const context = {CQ, WM, OS, $: id => nodes[id], closeStart: () => {},
+  const context = {CQ, WM, OS, E: x => String(x), $: id => nodes[id], closeStart: () => {},
     setInterval: fn => {interval = fn; return 1;}, clearInterval: () => {cleared = true;}};
   vm.runInNewContext(bsod, context);
   const promise = OS.bsod(cause ? {cause} : undefined);

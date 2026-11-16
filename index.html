@@ -12,9 +12,12 @@
 <link rel="stylesheet" href="assets/css/os.css">
 <link rel="stylesheet" href="assets/css/apps.css">
 <link rel="stylesheet" href="assets/css/mouse.css">
-<title>ClassiQuiz 2.0.9 | Um clássico que nunca existiu</title>
+<link rel="stylesheet" href="assets/css/web.css">
+<title>ClassiQuiz | Um clássico que nunca existiu</title>
 <!-- Olá, curioso(a)! Este HTML é todo do jogo. Nenhuma pergunta depende de você inspecionar nada. Mas o Claquim gosta de visitas. -->
+<script src="assets/js/build-info.js"></script>
 <script defer src="assets/js/core.js"></script>
+<script defer src="assets/js/clock.js"></script>
 <script defer src="assets/js/vfs.js"></script>
 <script defer src="assets/js/wm.js"></script>
 <script defer src="assets/js/mouse.js"></script>
@@ -33,13 +36,21 @@
 <script defer src="assets/js/apps-system.js"></script>
 <script defer src="assets/js/apps-files.js"></script>
 <script defer src="assets/js/apps-tools.js"></script>
+<script defer src="assets/js/touch.js"></script>
 <script defer src="assets/js/ttt-ai.js"></script>
 <script defer src="assets/js/apps-games.js"></script>
 <script defer src="assets/js/apps-desvio.js"></script>
+<script defer src="assets/js/apps-solitaire.js"></script>
 <script defer src="assets/js/system-effects.js"></script>
 <script defer src="assets/js/offline-runner.js"></script>
-<script defer src="assets/js/apps-runner.js"></script>
-<script defer src="assets/js/pwa.js"></script>
+<script defer src="assets/js/apps-net.js"></script>
+<script defer src="assets/js/web-core.js"></script>
+<script defer src="assets/js/web-sites-a.js"></script>
+<script defer src="assets/js/web-sites-b.js"></script>
+<script defer src="assets/js/apps-browser.js"></script>
+<script defer src="assets/js/apps-datetime.js"></script>
+<script defer src="assets/js/tutorial.js"></script>
+<script defer src="assets/js/update.js"></script>
 <script defer src="assets/js/main.js"></script>
 <script defer src="assets/js/touchpad.js"></script>
 </head>
@@ -60,6 +71,7 @@
         <button type="button" data-act="open-app" data-app="mais" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/mais-opcoes.svg" alt=""></span><span class="sc-label">Mais opções</span></button>
       </nav>
     </div>
+    <button type="button" data-act="open-app" data-app="browser" class="desktop-shortcut browser-shortcut"><span class="shortcut-icon"><img src="assets/icons/navegador.svg" alt=""></span><span class="sc-label">ClaQui Browser</span></button>
     <button type="button" data-act="open-app" data-app="ultra" class="desktop-shortcut ultra-shortcut"><span class="shortcut-icon ultra-icon"><img src="assets/icons/ultra.svg" alt=""></span><span class="sc-label">Ultra ClassiQuiz</span></button>
   </main>
   <div id="windows" class="windows-layer"></div>
@@ -68,9 +80,11 @@
     <button type="button" class="start-button" id="start-button" data-act="start-toggle" aria-expanded="false" aria-haspopup="menu"><img src="assets/classiquiz-icon.svg" alt=""><span>Start</span></button>
     <button type="button" class="task-icon" data-act="icon-logo" title="Mostrar a área de trabalho" aria-label="Mostrar a área de trabalho"><img src="assets/classiquiz-icon.svg" alt=""></button>
     <div class="task-programs" id="task-programs" role="group" aria-label="Programas abertos"></div>
-    <button type="button" class="task-version" data-act="version-click" title="Sobre a versão">v2.0.9</button>
-    <button type="button" id="task-clock" class="task-clock" title="Horário do dispositivo" tabindex="-1">--:--</button>
+    <button type="button" class="task-version" id="task-version" data-act="version-click" title="Sobre a versão">v</button>
+    <button type="button" id="task-net" class="task-net" data-act="net-panel" aria-haspopup="dialog" aria-expanded="false" aria-label="Rede do ClaQui OS" title="Rede do ClaQui OS"></button>
+    <button type="button" id="task-clock" class="task-clock" data-act="open-app" data-app="datetime" title="Data e hora" aria-label="Data e hora">--:--</button>
   </footer>
+  <div id="net-panel" class="net-panel" role="dialog" aria-label="Rede do ClaQui OS" hidden></div>
   <div id="cq-context" class="cq-context" role="menu" aria-label="Menu de contexto" hidden></div>
   <div id="modal-layer"></div>
   <div id="power-layer" class="power-layer" hidden></div>

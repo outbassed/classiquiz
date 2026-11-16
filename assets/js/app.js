@@ -395,13 +395,18 @@ const ACHIEVEMENTS = [
   ['g_desvio_win', 'Sem Saída? Sem Problema!', 'Alcançar o nível 25 de Desvio CQ.', s => s.desvioWin >= 1, 'jogos'],
   ['g_desvio_50', 'Meio Século', 'Alcançar o nível 50 de Desvio CQ.', s => s.desvio50 >= 1, 'jogos'],
   ['g_desvio_100', 'Centenário do Desvio', 'Alcançar o nível 100 de Desvio CQ.', s => s.desvio100 >= 1, 'jogos'],
-  ['offline_seen', 'Sem internet', 'Abrir o ClassiQuiz PWA sem conexão com a internet.', s => s.offlineSeen >= 1, 'jogos'],
-  ['runner_secret', 'Segredo desconectado', 'Descobrir o Offline Runner clicando no ícone triste da tela offline.', s => s.runnerSecret >= 1, 'secreta'],
+  ['offline_seen', 'Sem internet', 'Ver a tela de conexão perdida: desconecte a rede virtual do ClaQui OS e abra o ClaQui Browser (ou abra o PWA sem internet, se a instalação estiver incompleta).', s => s.offlineSeen >= 1, 'jogos'],
+  ['runner_secret', 'Segredo desconectado', 'Descobrir o Offline Runner: sem rede virtual, abra o ClaQui Browser e toque no rostinho triste.', s => s.runnerSecret >= 1, 'secreta'],
   ['runner_first', 'Primeiros passos', 'Alcançar 100 pontos no Offline Runner.', s => s.runner100 >= 1, 'jogos'],
   ['runner_alert', 'Alerta vermelho', 'Desviar de 10 alertas de erro voadores no Offline Runner.', s => s.runnerFlyerDodge >= 10, 'jogos'],
   ['runner_1000', 'Sem sinal, sem medo', 'Alcançar 1.000 pontos numa partida de Offline Runner.', s => s.runner1000 >= 1, 'jogos'],
   ['runner_180', 'Intocável offline', 'Sobreviver por 3 minutos no Offline Runner sem colisão.', s => s.runner180 >= 1, 'jogos'],
   ['runner_5000', 'Lenda offline', 'Alcançar 5.000 pontos numa partida de Offline Runner.', s => s.runner5000 >= 1, 'jogos'],
+  ['web_first', 'Navegando na Rede', 'Visitar um site no ClaQui Browser.', s => s.webVisit >= 1, 'jogos'],
+  ['web_explorer', 'Surfista da Web', 'Visitar 8 sites públicos diferentes no ClaQui Browser.', s => s.webExplorer >= 1, 'jogos'],
+  ['web_secret', 'Endereço Escondido', 'Encontrar um site secreto digitando o endereço certo.', s => s.webSecret >= 1, 'secreta'],
+  ['web_vault', 'Senha do Cofre', 'Abrir o cofre do Arquivo Secreto.', s => s.webVault >= 1, 'secreta'],
+  ['g_solitaire', 'Paciência de Monge', 'Vencer uma partida de Paciência.', s => s.solitaireWins >= 1, 'jogos'],
   ['g_pong', 'Rei da Quadra', 'Vencer uma partida de Pong.', s => s.pongWins >= 1, 'jogos'],
   ['secret1', 'Sem Pressa', 'Concluir um desafio de espera sem interferir.', s => s.patience >= 1, 'secreta'],
   ['secret2', 'Até o Fim', 'Concluir o desafio de 60 cliques.', s => s.clicked60 >= 1, 'secreta'],
@@ -434,7 +439,7 @@ function checkAchievements() { if (!canEarn()) return; for (const [id, , , done]
 API.stat = (k, n) => { stat(k, n); if (canEarn()) checkAchievements(); else saveAch(); };
 // Conquistas de programas (jogos de Mais opções): valem fora de partidas; bloqueadas por Terminal, tentativa de teste em andamento e Ultra ativo.
 const canEarnApp = () => !achievements.disabled && !CQ.rules.ultra() && !(S.dev && S.generation && !S.done && !S.lost);
-API.statApp = k => { if (!canEarnApp()) return; stat(k); for (const [id, , , done, cat] of ACHIEVEMENTS) if ((cat === 'jogos' || id === 'secret6' || id === 'runner_secret') && !achievements.unlocked[id] && done(achievements.stats)) unlock(id); saveAch(); };
+API.statApp = k => { if (!canEarnApp()) return; stat(k); for (const [id, , , done, cat] of ACHIEVEMENTS) if ((cat === 'jogos' || id === 'secret6' || id === 'runner_secret' || id === 'web_secret' || id === 'web_vault') && !achievements.unlocked[id] && done(achievements.stats)) unlock(id); saveAch(); };
 API.achievementsState = () => achievements;
 function recordSuccess() {
   const s = cur(); if (!s) return; stat('correct'); if (S.run) S.run.correct++;

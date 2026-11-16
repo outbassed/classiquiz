@@ -61,12 +61,20 @@ function settingsHtml(w) {
       <label>Tamanho<select data-act="mouse-size">${[24,32,40].map(n=>opt(n,n+' px',sz)).join('')}</select></label></div>
       <h2>Área de teste</h2><p class="muted">Passe o ponteiro sobre os campos abaixo. A mudança também vale para as janelas e programas do ClaQui OS.</p>
       <div class="mouse-test-panel" aria-label="Teste de cursores"><div class="mouse-test-normal">Seleção normal</div><div class="mouse-test-link">Mãozinha (link)</div><div class="mouse-test-text">Texto: passe aqui</div><div class="mouse-test-busy">Ocupado</div></div>
-      <h2>Touchpad virtual (celular e tablet)</h2><div class="touchpad-settings">
+      <h2>Touchpad virtual (celular e tablet)</h2><div class="touchpad-settings tp-set">
       <label><input type="checkbox" data-act="touchpad-enable" ${sys.touchpadEnabled?'checked':''}> Ativar touchpad virtual</label>
-      <p class="muted">Desativado por padrão. Você pode continuar usando o toque normalmente. Toque no painel para clicar; deslize para mover; dois dedos para rolar; botões para clique direito e arrastar.</p>
-      <label>Sensibilidade <input type="range" min="0.4" max="2.5" step="0.1" data-act="touchpad-sensitivity" value="${sys.touchpadSensitivity||1}"></label>
-      <label>Posição<select data-act="touchpad-position"><option value="right" ${sys.touchpadPosition!=='left'?'selected':''}>Direita</option><option value="left" ${sys.touchpadPosition==='left'?'selected':''}>Esquerda</option></select></label>
+      <p class="muted">Desativado por padrão e totalmente opcional: o toque normal sempre continua funcionando. Deslize para mover, toque para clicar, dois dedos rolam e a barra de título move o touchpad.${CQ.touchpad&&!CQ.touchpad.isAvailable()?' <b>(Este aparelho não tem tela de toque: o touchpad só aparece em celulares e tablets.)</b>':''}</p>
+      <label>Formato <select data-act="touchpad-shape">${Object.entries(CQ.touchpad?.shapes||{}).map(([k,v])=>`<option value="${k}" ${(sys.touchpadShape||'classico')===k?'selected':''}>${E(v[0])}</option>`).join('')}</select></label>
+      <label>Largura <input type="range" min="120" max="340" step="5" data-act="touchpad-w" value="${sys.touchpadW||CQ.touchpad?.dims().w||220}"> <small>${sys.touchpadW||'auto'}</small></label>
+      <label>Altura <input type="range" min="70" max="260" step="5" data-act="touchpad-h" value="${sys.touchpadH||CQ.touchpad?.dims().h||140}"> <small>${sys.touchpadH||'auto'}</small></label>
+      <label>Posição <select data-act="touchpad-position"><option value="right" ${(sys.touchpadPosition||'right')==='right'?'selected':''}>Direita</option><option value="center" ${sys.touchpadPosition==='center'?'selected':''}>Centro</option><option value="left" ${sys.touchpadPosition==='left'?'selected':''}>Esquerda</option><option value="custom" ${sys.touchpadPosition==='custom'?'selected':''}>Personalizada (arraste a barra)</option></select></label>
+      <label>Botões <select data-act="touchpad-buttons"><option value="integrated" ${sys.touchpadButtons!=='bar'?'selected':''}>Integrados ao touchpad</option><option value="bar" ${sys.touchpadButtons==='bar'?'selected':''}>Em barra destacada</option></select></label>
       <label>Opacidade <input type="range" min="0.35" max="1" step="0.05" data-act="touchpad-opacity" value="${sys.touchpadOpacity??.88}"></label>
+      <label>Sensibilidade <input type="range" min="0.4" max="2.5" step="0.1" data-act="touchpad-sensitivity" value="${sys.touchpadSensitivity||1}"></label>
+      <label>Aceleração <input type="range" min="0" max="1" step="0.1" data-act="touchpad-accel" value="${sys.touchpadAccel??1}"></label>
+      <label><input type="checkbox" data-act="touchpad-tap" ${sys.touchpadTapClick!==false?'checked':''}> Tocar na superfície clica</label>
+      <div class="tp-prof"><b>Perfis:</b> <select data-act="touchpad-profile" aria-label="Perfis salvos"><option value="">Escolher perfil…</option>${Object.keys(CQ.touchpad?.profiles()||{}).map(n=>`<option value="${E(n)}">${E(n)}</option>`).join('')}</select><input type="text" id="tp-prof-name" maxlength="24" placeholder="Nome do perfil" aria-label="Nome do perfil"><button type="button" class="chrome-button tiny" data-act="touchpad-profile-save">Salvar perfil</button><button type="button" class="chrome-button tiny" data-act="touchpad-profile-del">Excluir</button></div>
+      <h2>Toque nos minijogos</h2><label><input type="checkbox" data-act="touch-buttons" ${sys.touchButtons?'checked':''}> Mostrar botões de direção na tela (Cobrinha, Pong, Desvio CQ). Os jogos funcionam por gestos sem eles.</label>
       </div><h2>Personalizar ponteiros</h2><div class="mouse-role-grid">${mouse.roles.map(([id,name]) => {
         const theme = slots[id] || sch;
         return `<div class="mouse-role"><label for="mouse-${id}">${E(name)}</label><div class="mouse-role-preview" style="cursor:${mouse.preview(id,theme,sz)}" title="Mova o mouse aqui">Mova o mouse aqui</div><select id="mouse-${id}" data-act="mouse-role" data-role="${id}">${opt('', 'Usar esquema', slots[id] || '')}${mouse.schemes.map(([v,n])=>opt(v,n,slots[id] || '')).join('')}</select></div>`;
@@ -84,9 +92,9 @@ function settingsHtml(w) {
       <p class="muted"><b>O que o reset faz:</b> apaga as conquistas já desbloqueadas e o progresso das metas. Mantém estatísticas gerais, recordes, favoritas, Trilhas e preferências. Uma tentativa em andamento que tenha sido marcada como teste continua sem conquistas; só uma tentativa nova e limpa volta a desbloquear.</p>
       <div class="actions"><button type="button" class="chrome-button danger" data-act="reset-ach" ${ultra ? 'disabled' : ''}>Resetar conquistas…</button></div>${ultra ? '<p class="muted">Indisponível durante uma partida Ultra.</p>' : ''}`;
   } else if(tab === 'atualizacoes') {
-    body = `<h2>ClaQui Update</h2><p>Consulte a versão publicada online e instale as novidades quando desejar.</p><div class="actions"><button type="button" class="chrome-button primary" data-act="open-app" data-app="updates">Abrir ClaQui Update</button></div>`;
+    body = `<h2>ClaQui Update</h2><p>Consulte a versão publicada online e instale as novidades quando desejar. Versão em uso: <b>${E(CQ.VERSION)}</b> (compilação ${E(CQ.BUILD)}).</p><div class="actions"><button type="button" class="chrome-button primary" data-act="open-app" data-app="updates">Abrir ClaQui Update</button></div>`;
   } else {
-    body = `<h2>Sistema</h2><p>ClaQui OS ${CQ.VERSION} • dados guardados apenas neste navegador (${CQ.vfs.mode === 'idb' ? 'IndexedDB' : 'memória'} para arquivos virtuais).</p>
+    body = `<h2>Sistema</h2><p>${E(CQ.clock.osName())} • versão ${E(CQ.VERSION)} (compilação ${E(CQ.BUILD)}) • dados guardados apenas neste navegador (${CQ.vfs.mode === 'idb' ? 'IndexedDB' : 'memória'} para arquivos virtuais).</p>
       <div class="actions"><button type="button" class="chrome-button" data-act="open-app" data-app="about">Sobre o ClaQui OS</button><button type="button" class="chrome-button" data-act="open-app" data-app="stats">Estatísticas</button></div>
       <p class="muted">Ctrl + botão direito abre o menu nativo do navegador. F12 e “Inspecionar” funcionam normalmente.</p>`;
   }
@@ -101,7 +109,7 @@ A.settings = {title: 'Configurações', icon: 'assets/icons/configuracoes.svg', 
       w.body.addEventListener('change', e => settingsChange(e, w));
       w.body.addEventListener('input', e => { if (e.target.dataset.act === 'set-volume') { CQ.sys.set({volume: Number(e.target.value)}); const v = w.body.querySelector('#vol-val'); if (v) v.textContent = e.target.value + '%'; } });
     }
-    w.setTitle('Configurações'); w.setStatus('Alterações são salvas automaticamente.', 'ClaQui OS ' + CQ.VERSION);
+    w.setTitle('Configurações'); w.setStatus('Alterações são salvas automaticamente.', CQ.clock.osName() + ' • ' + CQ.VERSION);
     w.body.innerHTML = settingsHtml(w);
   }};
 function wpFromSys() { wpDraft = {id: CQ.sys.get('wallpaper'), fit: CQ.sys.get('wallpaperFit')}; }
@@ -120,6 +128,8 @@ async function settingsClick(e, w) {
   else if (a === 'toggle-sound') { CQ.prefs.sound = !CQ.prefs.sound; CQ.savePrefs(); re(); }
   else if (a === 'test-sound') { const s = CQ.prefs.sound; CQ.prefs.sound = true; CQ.tone(660, 120); CQ.prefs.sound = s; }
   else if (a === 'reset-ach') resetAchievementsFlow();
+  else if (a === 'touchpad-profile-save') { const n = w.body.querySelector('#tp-prof-name')?.value; if (CQ.touchpad.saveProfile(n)) { CQ.notify('Perfil salvo: ' + n.trim()); re(); } else CQ.notify('Digite um nome para o perfil.'); }
+  else if (a === 'touchpad-profile-del') { const n = w.body.querySelector('[data-act="touchpad-profile"]')?.value; if (n && CQ.touchpad.deleteProfile(n)) { CQ.notify('Perfil excluído.'); re(); } else CQ.notify('Escolha um perfil na lista para excluir.'); }
 }
 async function settingsChange(e, w) {
   const t = e.target, a = t.dataset.act; if (!a && t.id !== 'wp-file') return;
@@ -131,6 +141,14 @@ async function settingsChange(e, w) {
   else if (a === 'mouse-trail') { CQ.sys.set({mouseTrail:t.checked}); CQ.mouse.apply(); }
   else if (a === 'touchpad-enable') CQ.sys.set({touchpadEnabled:t.checked});
   else if (a === 'touchpad-position') CQ.sys.set({touchpadPosition:t.value});
+  else if (a === 'touchpad-shape') CQ.sys.set({touchpadShape:t.value,touchpadW:0,touchpadH:0});
+  else if (a === 'touchpad-w') CQ.sys.set({touchpadW:Number(t.value)});
+  else if (a === 'touchpad-h') CQ.sys.set({touchpadH:Number(t.value)});
+  else if (a === 'touchpad-buttons') CQ.sys.set({touchpadButtons:t.value});
+  else if (a === 'touchpad-accel') CQ.sys.set({touchpadAccel:Number(t.value)});
+  else if (a === 'touchpad-tap') CQ.sys.set({touchpadTapClick:t.checked});
+  else if (a === 'touch-buttons') CQ.sys.set({touchButtons:t.checked});
+  else if (a === 'touchpad-profile') { if (t.value && CQ.touchpad.loadProfile(t.value)) { CQ.notify('Perfil aplicado: ' + t.value); WM.refresh('settings'); } }
   else if (a === 'touchpad-opacity') CQ.sys.set({touchpadOpacity:Number(t.value)});
   else if (a === 'touchpad-sensitivity') CQ.sys.set({touchpadSensitivity:Number(t.value)});
   else if (a === 'set-look') { applySys({[t.dataset.key]: t.value}); }
@@ -222,92 +240,19 @@ A.dev = {title: 'Terminal', icon: 'assets/icons/terminal.svg', bodyClass: 'flush
 CQ.bus.on('achievements:reset', () => WM.close('dev'));
 
 // =============== Sobre e Atualizações ===============
-A.about = {title: 'Sobre', icon: 'assets/icons/sobre.svg', bodyClass: 'page', maxDefault: false, w: 640, h: 560,
+A.about = {title: 'Sobre', icon: 'assets/icons/sobre.svg', bodyClass: 'page', maxDefault: false, w: 640, h: 600,
   render(w) {
-    w.setTitle('Sobre'); w.setStatus('ClaQui OS ' + CQ.VERSION, 'ClassiQuiz');
+    const name = CQ.clock.osName();
+    w.setTitle('Sobre o ' + name); w.setStatus(name + ' • ' + CQ.VERSION, 'Compilação ' + CQ.BUILD);
     w.body.innerHTML = `<div class="setup-simple"><div class="about-head"><img src="assets/img/claquim.svg" alt="Claquim, assistente do ClaQui OS" width="96" height="96"><div><h1>ClassiQuiz</h1><p class="slogan">UM CLÁSSICO QUE NUNCA EXISTIU</p></div></div>
-      <p><b>ClassiQuiz</b> é um quiz de perguntas, pegadinhas, minigames, missões e histórias encadeadas. Ele roda dentro do <b>ClaQui OS</b>, um sistema operacional <i>fictício</i> (Classic + Quiz) que existe só no seu navegador.</p>
-      <p>Versão <b>${CQ.VERSION}</b>. Código sob licença MIT. O PWA oficial carrega o jogo online; apenas a tela sem conexão e o Offline Runner funcionam offline. O pacote local para Windows funciona sem internet.</p>
-      <p class="muted">Todos os arquivos do Explorador, incluindo a pasta System32, e as operações de desligar e reiniciar são <b>simulações virtuais</b>: nenhum arquivo ou configuração real do seu computador é lido, criado, alterado ou apagado.</p>
-      <p class="muted">Personagens e artes originais: Claquim (assistente do sistema) e Milhito (apresentador do Show do Milhozão). “Show do Milhozão” é uma paródia original e não tem relação com programas reais.</p></div>`;
+      <p><b>ClassiQuiz</b> é um quiz de perguntas, pegadinhas, minigames, missões e histórias encadeadas. Ele roda dentro do <b>ClaQui OS</b> (Classic + Quiz), um sistema operacional <i>fictício</i> que existe só no seu navegador. O nome visível do sistema acompanha o ano do relógio: agora ele é <b data-osname>${E(name)}</b>.</p>
+      <table class="stat-table about-ver"><tbody><tr><th scope="row">Versão</th><td><b>${E(CQ.VERSION)}</b></td></tr><tr><th scope="row">Compilação</th><td>${E(CQ.BUILD)}</td></tr><tr><th scope="row">Publicada em</th><td>${E((CQ.RELEASED_AT || '').split('-').reverse().join('/') || '—')} <span class="muted">(data real, independente do relógio simulado)</span></td></tr></tbody></table>
+      <p>Código sob licença MIT. Instalado como PWA, o jogo inteiro (apps, perguntas, Trilhas, minijogos e o ClaQui Browser) funciona <b>sem internet</b>. A internet real só é usada pelo ClaQui Update.</p>
+      <p class="muted">Todos os arquivos do Explorador, a pasta System32, a rede, o navegador, o relógio e as operações de desligar e reiniciar são <b>simulações virtuais</b>: nada do seu computador real é lido, alterado ou apagado.</p>
+      <p class="muted">Personagens e artes originais: Claquim (assistente do sistema) e Milhito (apresentador do Show do Milhozão). “Show do Milhozão” é uma paródia original e não tem relação com programas reais.</p>
+      <div class="actions"><button type="button" class="chrome-button primary" data-act="open-app" data-app="tutorial">Ajuda e Tutorial</button><button type="button" class="chrome-button" data-act="open-app" data-app="updates">ClaQui Update</button><button type="button" class="chrome-button" data-act="open-app" data-app="datetime">Data e Hora</button></div></div>`;
   }};
-const CHANGES = [
-  ['v2.0.9: ClaQui Update', 'Central online de versões, consulta real do arquivo version.json, histórico e atualização sob confirmação.'],
-  ['PWA online e Offline Runner', 'Instalável no celular; somente a tela cinza sem internet e o Runner secreto funcionam offline.'],
-  ['Touchpad, janelas e responsividade', 'Touchpad móvel opcional, janelas maximizadas por padrão, minijogos e tela final adaptados.'],
-  ['Jogo da Velha X ou O', 'Escolha de símbolo, quem começa e modo Ladrão adaptado ao símbolo da máquina.'],
-  ['Banco B7', 'Novas perguntas resolvidas diretamente no menu contextual, preservando seeds antigas.'],
-  ['v2.0.8: correção real do mouse', 'Caminhos dos cursores corrigidos; PNG e SVG, 15 funções, 4 esquemas, testes por área e prévias nas Configurações.'],
-  ['Menu Iniciar completo', 'Lista rolável dos programas por categoria, com Desligar e Reiniciar sempre visíveis.'],
-  ['Desvio CQ sem fase final', 'Níveis contínuos, recorde do maior nível, obstáculos com velocidade limitada e conquistas para 25, 50 e 100 níveis.'],
-  ['v2.0.7: atalhos reorganizados', 'Conquistas e Recompensas na área de trabalho; Favoritas, Atualizações e todos os utilitários diretamente em Mais opções.'],
-  ['Desvio CQ', 'Novo arcade original substitui o Pac-Man CQ; missões antigas e saves continuam preservados.'],
-  ['Propriedades do Mouse', 'Quatro esquemas retrô originais e 15 tipos de ponteiros personalizáveis, com rastro e tamanho.'],
-  ['Desvio CQ e Cobrinha', 'Arcade original de obstáculos e reflexos; Cobrinha pode atravessar paredes.'],
-  ['Conquistas dos minijogos', 'Novas metas do Desvio CQ e da Cobrinha.'],
-  ['Trilha Aleatória', 'Continuar aparece só na seleção dos modos, não na escolha do tamanho.'],
-  ['Calculadora: divisão por zero', 'Primeira ocorrência provoca tela azul fictícia; as seguintes têm 50% de chance de tela azul ou erro na calculadora.'],
-  ['Jogo da Velha 2.0.3', 'Fácil, Médio e Difícil desde o início; Ladrão é desbloqueado após a primeira vitória, com 25% de chance por partida.'],
-  ['Tela Jogar', 'Quatro cards em grade 2×2, com ClassiQuiz Aleatório abrindo a seleção de tamanho.'],
-  ['Meu Dispositivo', 'Navegação como um computador: Meu Dispositivo > Disco Local CQ: > ClaQui > System32, com novas pastas fictícias e migração dos arquivos salvos.'],
-  ['Pastas e missões do ClaQui OS', 'Exclusões simuladas produzem efeitos temporários; missões usam Registros e arquivos ocultos de Config.'],
-  ['ClaQui OS', 'Sistema operacional fictício com várias janelas, barra de tarefas rolável, menu Start, menu de contexto próprio, boot, desligar e reiniciar simulados.'],
-  ['ClassiQuiz 1, 2 e 3', 'Três edições oficiais de 50 questões fixas, cada uma com identidade própria, e a Trilha Aleatória no novo banco B6.'],
-  ['Banco B6', 'Revisão completa das 534 questões do banco anterior (auditoria item a item) e dezenas de novas questões, pegadinhas, histórias e missões.'],
-  ['Show do Milhozão', 'Bloco de 10 rodadas crescentes com o apresentador Milhito e a conquista “Milhonário”.'],
-  ['Programas', 'Explorador de arquivos virtual, Lixeira, Bloco de Notas, Paint, Calculadora, Campo Minado, Jogo da Velha, Cobrinha, Pong, Calendário, Relógio e Visualizador.'],
-  ['Missões', 'Questões que pedem tarefas reais nos programas, incluindo manter um programa aberto por 10 ou 20 segundos.'],
-  ['Terminal', 'Agora no menu Start, com autorização e desativação persistente das conquistas até o reset.'],
-  ['Configurações', 'Tamanho da interface (100–175%), papel de parede com importação, temas, cursores e som.'],
-  ['Recompensas', 'Fichas Classi e loja cosmética, sem nenhuma vantagem no jogo.'],
-  ['Dados antigos', 'Seeds B1–B5, biblioteca, favoritas, conquistas e preferências da v1.2.x continuam funcionando; migração segura com backup lógico.']
-];
-// ClaQui Update: consulta apenas arquivo público da versão; não simula progresso de download.
-const UPDATE_JSON='version.json',UPDATE_FLAG='classiquiz.v1.update-check';
-let lastUpdate={state:'idle', latest:null, checked:0, error:''};
-function verCompare(a,b){const aa=String(a).split('.').map(Number),bb=String(b).split('.').map(Number);for(let i=0;i<3;i++){const diff=(aa[i]||0)-(bb[i]||0);if(diff)return Math.sign(diff);}return 0;}
-function updateHtml(){
-  const c=lastUpdate,latest=c.latest,available=latest&&verCompare(latest.version,CQ.VERSION)>0;
-  const status=c.state==='checking'?'Procurando atualizações…':c.state==='error'?'Não foi possível verificar':available?'Nova versão disponível':'Seu ClaQui OS está atualizado';
-  return `<div class="setup-simple update-center"><div class="update-header"><img src="assets/icons/atualizacoes.svg" alt=""><div><h1>ClaQui Update</h1><p class="muted">Central de atualizações do ClaQui OS</p></div></div>
-    <div class="update-status"><h2>${E(status)}</h2><p>Versão em uso: <b>${E(CQ.VERSION)}</b></p>
-    ${latest?`<p>Última versão publicada: <b>${E(latest.version)}</b></p>`:''}
-    ${c.state==='error'?`<p class="muted">${E(c.error)}</p>`:''}
-    ${c.checked?`<p class="muted">Última verificação: ${E(CQ.fmtDate(c.checked))}</p>`:'<p class="muted">Ainda não foram procuradas atualizações.</p>'}</div>
-    ${available?`<div class="update-new"><h2>Disponível: ${E(latest.version)}</h2><p>${E(latest.summary||'Uma nova versão do ClaQui OS está disponível.')}</p><button type="button" class="chrome-button primary" data-update="install">Atualizar e reiniciar</button></div>`:''}
-    <div class="actions"><button type="button" class="chrome-button primary" data-update="check" ${c.state==='checking'?'disabled':''}>Procurar atualizações</button>${c.state==='error'?'<button type="button" class="chrome-button" data-update="retry">Tentar novamente</button>':''}</div>
-    <h2>Histórico de atualizações</h2><ul class="changes">${CHANGES.slice(0,7).map(([t,d])=>`<li><b>${E(t)}</b> ${E(d)}</li>`).join('')}</ul>
-    <p class="muted">Na versão web, atualizar carrega os novos arquivos publicados na Vercel. Em arquivos locais (.bat), o ClaQui Update apenas informa se há uma versão web nova; não substitui arquivos do seu computador. Seus dados locais continuam salvos no navegador.</p>
-    </div>`;
-}
-async function checkUpdate(w){
-  if(lastUpdate.state==='checking')return;
-  if(location.protocol==='file:'){lastUpdate={state:'error',error:'Esta é uma edição local. Abra a versão publicada na web para verificar atualizações.',latest:null,checked:Date.now()};w&&WM.get('updates')&&renderUpdate(w);return;}
-  lastUpdate.state='checking';if(w&&WM.get('updates'))renderUpdate(w);
-  try{
-    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),10000);
-    const response=await fetch(`${UPDATE_JSON}?check=${Date.now()}`,{cache:'no-store',signal:controller.signal});clearTimeout(timer);
-    if(!response.ok)throw Error('O servidor não respondeu.');
-    const data=await response.json();if(!/^\d+\.\d+\.\d+$/.test(data.version))throw Error('O servidor enviou uma versão inválida.');
-    lastUpdate={state:'ok',latest:data,checked:Date.now(),error:''};
-  }catch(err){lastUpdate={state:'error',latest:null,checked:Date.now(),error:'Verifique sua conexão e tente novamente.'};}
-  if(w&&WM.get('updates'))renderUpdate(w);
-}
-function renderUpdate(w){w.setTitle('ClaQui Update');w.setStatus('Servidor online: '+(location.protocol==='file:'?'não disponível':'consulta real'),'ClaQui OS '+CQ.VERSION);w.body.innerHTML=updateHtml();}
-A.updates={title:'ClaQui Update',icon:'assets/icons/atualizacoes.svg',bodyClass:'page update-page',refreshOnOpen:false,
-  render(w){if(!w._bound){w._bound=true;w.body.addEventListener('click',e=>{
-    const b=e.target.closest('[data-update]');if(!b)return;
-    if(b.dataset.update==='check'||b.dataset.update==='retry')void checkUpdate(w);
-    else if(b.dataset.update==='install'){
-      if(!lastUpdate.latest||verCompare(lastUpdate.latest.version,CQ.VERSION)<=0)return;
-      if(location.protocol==='file:'){CQ.notify('A atualização automática requer o site online.');return;}
-      // Não força reinício silencioso em partidas, nem finge download do programa.
-      void CQ.ui.confirm('Atualizar ClaQui OS',`<p>Carregar a versão <b>${E(lastUpdate.latest.version)}</b> agora?</p><p>O progresso é salvo automaticamente; documentos ainda não salvos podem ser perdidos.</p>`,'Atualizar agora','Depois').then(ok=>{if(ok)location.reload();});
-    }
-  });}
-  renderUpdate(w);
-  const stamp=Number(CQ.store.read(UPDATE_FLAG,0))||0;if(Date.now()-stamp>6*3600000){CQ.store.write(UPDATE_FLAG,Date.now());void checkUpdate(w);}
- }};
+// ClaQui Update: agora em assets/js/update.js (consulta real, Service Worker, progresso verdadeiro).
 
 // =============== Estatísticas ===============
 A.stats = {title: 'Estatísticas', icon: 'assets/icons/estatisticas.svg', bodyClass: 'page', maxDefault: false, w: 760, h: 600, refreshOnOpen: true,
@@ -346,11 +291,12 @@ function folder(title, icon, items, crumb) {
     }};
 }
 A.mais = folder('Mais opções', 'assets/icons/mais-opcoes.svg', [
+  ['browser', 'ClaQui Browser'], ['netconfig', 'Configurações de Rede'], ['datetime', 'Data e Hora'], ['tutorial', 'Ajuda e Tutorial'],
   ['favorites', 'Favoritas'], ['updates', 'ClaQui Update'],
   ['achievements', 'Conquistas'], ['stats', 'Estatísticas'], ['rewards', 'Recompensas'],
   ['explorer', 'Explorador de Arquivos'], ['notepad', 'Bloco de Notas'], ['paint', 'Paint'],
   ['calc', 'Calculadora'], ['mines', 'Campo Minado'], ['ttt', 'Jogo da Velha'],
-  ['snake', 'Cobrinha'], ['desvio', 'Desvio CQ'], ['runner', 'Offline Runner'], ['pong', 'Pong'],
+  ['snake', 'Cobrinha'], ['desvio', 'Desvio CQ'], ['solitaire', 'Paciência'], ['pong', 'Pong'],
   ['calendar', 'Calendário'], ['clock', 'Relógio'], ['viewer', 'Visualizador'],
   ['player', 'Reprodutor'], ['trash', 'Lixeira']
 ], 'ClaQui OS › Mais opções');

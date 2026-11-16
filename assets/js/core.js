@@ -2,7 +2,10 @@
 (() => {
 'use strict';
 const CQ = window.CQ = window.CQ || {};
-CQ.VERSION = '2.0.9';
+const BUILD_INFO = window.CQ_BUILD || {version: 'dev', build: '00000000.000000', releasedAt: ''};
+CQ.VERSION = BUILD_INFO.version;          // nome público da release (ex.: 26nov16) — gerado por tools/build.js
+CQ.BUILD = BUILD_INFO.build;              // compilação DDMMAAAA.HHMMSS
+CQ.RELEASED_AT = BUILD_INFO.releasedAt;   // data real da publicação (não depende do relógio simulado)
 CQ.apps = {};
 CQ.rules = {ultra: () => false};          // preenchido pelo jogo: regras que dependem da partida atual
 CQ.KEYS = {SESSION:'classiquiz.v1.session',LIB:'classiquiz.v1.library',PREF:'classiquiz.v1.preferences',ACH:'classiquiz.v1.achievements',
@@ -14,7 +17,8 @@ CQ.mono = () => (typeof performance !== 'undefined' ? performance.now() : Date.n
 // Normalização explícita usada nas missões de texto: minúsculas, sem acentos, espaços colapsados.
 CQ.norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
 CQ.pad2 = n => String(n).padStart(2, '0');
-CQ.fmtDate = t => { const d = new Date(t); return `${CQ.pad2(d.getDate())}/${CQ.pad2(d.getMonth()+1)}/${d.getFullYear()} ${CQ.pad2(d.getHours())}:${CQ.pad2(d.getMinutes())}`; };
+// Datas exibidas passam pelo relógio simulado quando ele existe (CQ.clock, definido em clock.js); caso contrário, usam o dispositivo.
+CQ.fmtDate = t => { if (CQ.clock) return CQ.clock.fmtDateTime(t); const d = new Date(t); return `${CQ.pad2(d.getDate())}/${CQ.pad2(d.getMonth()+1)}/${d.getFullYear()} ${CQ.pad2(d.getHours())}:${CQ.pad2(d.getMinutes())}`; };
 
 // ---------- armazenamento local (JSON), tolerante a dados corrompidos e falta de espaço ----------
 CQ.store = {
@@ -32,7 +36,12 @@ CQ.bus = {
 
 // ---------- preferências do sistema (ClaQui OS) ----------
 const SYS_DEFAULTS = {scale: null, wallpaper: 'classico', wallpaperFit: 'fill', customWallpaper: false, reduceMotion: 'auto', volume: 70,
-  bootCompleted: false, terminalConsent: false, iconOrder: 'default', theme: 'padrao', cursor: 'padrao', mouseScheme: 'classico', mouseSize: 32, mouseRoles: {}, mouseTrail: false, touchpadEnabled: false, touchpadFolded: false, touchpadSensitivity: 1, touchpadPosition: 'right', touchpadOpacity: .88, touchpadSize: 'medium', iconStyle: 'padrao', lastBoot: 0};
+  bootCompleted: false, terminalConsent: false, iconOrder: 'default', theme: 'padrao', cursor: 'padrao', mouseScheme: 'classico', mouseSize: 32, mouseRoles: {}, mouseTrail: false, touchpadEnabled: false, touchpadFolded: false, touchpadSensitivity: 1, touchpadPosition: 'right', touchpadOpacity: .88, touchpadSize: 'medium', iconStyle: 'padrao', lastBoot: 0,
+  // v26nov16: relógio simulado, rede virtual, tutorial e touchpad avançado (valores novos; dados antigos permanecem intactos)
+  clockMode: 'device', clockOffset: 0, clockFrozen: false, clockFrozenAt: 0, clock24: true, clockTz: 'device',
+  netOnline: true, netDial: false, fastEffects: false,
+  tutorialDone: false, tutorialHide: false, seenRelease: '',
+  touchpadShape: 'classico', touchpadW: 0, touchpadH: 0, touchpadAccel: 1, touchpadTapClick: true, touchpadX: -1, touchpadY: -1, touchpadProfiles: {}, touchpadButtons: 'integrated'};
 let sysCache = null;
 CQ.sys = {
   all() { if (!sysCache) { const raw = CQ.store.read(CQ.KEYS.SYS, {}); sysCache = Object.assign({}, SYS_DEFAULTS, raw && typeof raw === 'object' ? raw : {}); } return sysCache; },
