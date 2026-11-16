@@ -5,7 +5,7 @@
    • Depois de ativada, apenas o cache ativo sobra: caches antigos do ClassiQuiz (e o cq-offline-* legado) são apagados.
    • Só mexe em CacheStorage do próprio app. Nunca toca em localStorage, IndexedDB, saves, conquistas, seeds ou preferências.
    • version.json e asset-manifest.json nunca vêm do cache (o ClaQui Update consulta a rede real). */
-const BUILD = '16112026.114521'; // carimbado por tools/build.js
+const BUILD = '16112026.192835'; // carimbado por tools/build.js
 const PREFIX = 'classiquiz-cache-';
 const CACHE = PREFIX + BUILD;
 const LEGACY_PREFIXES = ['cq-offline-'];
