@@ -1,0 +1,4 @@
+tests/capturas/
+node_modules/
+*.log
+.DS_Store

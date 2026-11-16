@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" shape-rendering="crispEdges">
+<title>Continuar</title>
+<rect x="7" y="8" width="37" height="37" fill="#062b50" opacity=".8"/>
+<rect x="3" y="3" width="39" height="39" fill="#505c70"/>
+<path d="M3 3H42V6H6V42H3Z" fill="#f5f7ff"/>
+<path d="M42 3V42H3V39H39V3Z" fill="#465062"/>
+<rect x="7" y="7" width="31" height="31" fill="#8dd3a9"/>
+<path d="M7 7H38V9H9V38H7Z" fill="#d2ffe0" opacity=".72"/>
+<path d="M38 7V38H7V36H36V7Z" fill="#172b51" opacity=".32"/>
+
+<path d="M12 17H27V12L35 21L27 30V25H18V31H12V24Q12 17 19 17Z" fill="#093f5a"/><path d="M12 16H27V11L35 20L27 29V24H18V30H12V23Q12 16 19 16Z" fill="#f3fff4"/><path d="M15 19H27V15L32 20L27 25V22H17V29H15Z" fill="#086c61"/>
+</svg>

@@ -1,0 +1,128 @@
+NOVIDADES DA 2.0.8
+- Mouse: cursores agora carregam corretamente em PNG (fallback SVG), com quatro esquemas, 15 tipos e área de teste em Configurações > Mouse.
+- Menu Iniciar: contém todos os programas, categorias e lista rolável, com Desligar e Reiniciar fixos.
+- Desvio CQ: não termina mais no nível 10; recorde de nível salvo, obstáculos com velocidade limitada e conquistas para níveis 25/50/100.
+- Funciona no navegador, somente dentro do ClaQui OS; não altera o mouse real nem o Windows.
+
+CLASSIQUIZ v2.0.8 — ClaQui OS — Novembro/2026
+UM CLÁSSICO QUE NUNCA EXISTIU
+==============================================
+
+COMO ABRIR NO WINDOWS
+1. Extraia o ZIP inteiro em uma pasta.
+2. Clique duas vezes em INICIAR-CLASSIQUIZ.bat.
+3. Mantenha a janela do inicializador aberta enquanto joga.
+   (Endereço local fixo: http://127.0.0.1:8765/ — use sempre o mesmo navegador
+   e o mesmo endereço para manter o progresso.)
+
+Se preferir, sirva a pasta com qualquer servidor estático local, sempre num
+endereço fixo. Sem internet, frontend puro, sem cadastro, sem backend, sem
+telemetria, sem anúncios.
+
+O QUE HÁ DE NOVO NA 2.0.8
+- O desktop agora tem Jogar, Continuar, Minhas Trilhas, Conquistas,
+  Configurações, Recompensas, Sobre e Mais opções (Ultra à direita).
+- Favoritas e Atualizações ficam dentro de Mais opções, junto de todos
+  os outros programas. A subpasta Outros foi removida.
+- O minijogo Pac-Man CQ saiu; entrou o arcade original Desvio CQ:
+  obstáculos, bônus, dez níveis, recorde e controles PC/mobile.
+- Conquistas específicas do Desvio CQ substituem as do jogo retirado.
+- Mantidos: configurações do Mouse e Cobrinha sem colisão de paredes.
+
+O QUE É A VERSÃO 2.0.8
+O ClassiQuiz agora é um jogo dentro do ClaQui OS, um sistema operacional
+FICTÍCIO que roda no navegador. Tudo que o sistema "apaga", "desliga" ou
+"reinicia" é simulação sobre arquivos VIRTUAIS. O seu computador real nunca é
+tocado, e as ferramentas do navegador (F12) não são bloqueadas.
+
+- Área de trabalho com 8 atalhos + Ultra ClassiQuiz; Mais opções contém
+  Favoritas, Atualizações, Conquistas, Estatísticas, Recompensas, Explorador,
+  Bloco de Notas, Paint, Calculadora, Campo Minado, Jogo da Velha, Cobrinha,
+  Desvio CQ, Pong, Calendário, Relógio, Visualizador, Reprodutor e Lixeira.
+  Não há mais a subpasta Outros.
+- Menu Iniciar com o Terminal (somente ali), Desligar e Reiniciar simulados.
+- Várias janelas, barra de tarefas com rolagem horizontal só na faixa de
+  programas, menu de contexto próprio (Ctrl + botão direito = menu do
+  navegador; toque prolongado no celular).
+- Configurações: tamanho da interface 100/125/150/175 %, papéis de parede
+  (presets e importação com prévia, preencher/ajustar/esticar/repetir e
+  restaurar), som, volume, movimento reduzido, conquistas.
+- Terminal com aviso de permissão (UAC fictício): ao aceitar, as conquistas
+  ficam desativadas até "Resetar conquistas" (preserva estatísticas, recordes,
+  favoritas e preferências).
+- Explorador virtual, com pastas e arquivos fictícios. Todas as exclusões e
+  alterações acontecem apenas dentro do ClaQui OS, sem afetar o computador real.
+- Banco B6: 363 perguntas, 30 estendidas, 40 pegadinhas, 35 minijogos,
+  24 histórias/investigações, 21 missões de programa e 60 itens do Show do
+  Milhozão. Os 534 itens do B5 foram revisados um a um (AUDITORIA-QUESTOES.csv).
+- ClassiQuiz 1, 2 e 3: três edições oficiais de 50 posições fixas, jogáveis com
+  mouse OU toque. Trilha Aleatória (25 a 400) usa o B6. Ultra com 1, 2 ou 3
+  corações (só 1 coração libera as conquistas do Ultra).
+- Show do Milhozão (apresentador Milhito): 10 rodadas de dificuldade 1→10;
+  conquista "Milhonário" com 10/10 sem erro.
+- Missões que pedem tarefas reais nos programas (texto no Bloco de Notas,
+  balde no Paint, conta na Calculadora, achar arquivo, restaurar da Lixeira,
+  olhar uma imagem, manter um programa aberto por 10/20 s).
+- 52 conquistas, Fichas Classi e loja cosmética.
+
+
+REGRA ATUAL — CALCULADORA
+Na PRIMEIRA divisão por zero, o ClaQui OS mostra uma tela azul simulada
+por 8 segundos, seguida de uma reinicialização fictícia. A partir da
+SEGUNDA divisão por zero (inclusive após reiniciar ou reabrir o jogo),
+o sistema sorteia 50% de outra tela azul ou 50% de erro matemático sem reiniciar.
+Também vale para 0 ÷ 0 e para operações encadeadas sem apertar =.
+A ocorrência fica salva no mesmo navegador e endereço do jogo.
+O seu computador real nunca trava e nenhum arquivo pessoal é alterado.
+
+DADOS ANTIGOS PRESERVADOS
+Biblioteca, favoritas, recordes, Fichas, conquistas, estatísticas e
+preferências da v1.2.x são mantidos. A migração é idempotente e cria o backup
+lógico "classiquiz.v1.backup.pre-v2". Seeds B1 a B5 e Ultra v1 continuam
+gerando exatamente as mesmas Trilhas.
+
+SALVAMENTO
+- Progresso, biblioteca, favoritos, conquistas e estatísticas ficam somente no
+  armazenamento local do navegador (localStorage e IndexedDB).
+- A sessão da partida tem 20 minutos para retomar; a seed continua fixa.
+- Faça backup com "Exportar biblioteca" (Minhas Trilhas).
+- Não apague os dados do site se quiser manter seus registros.
+
+CONTROLES
+- Barra Start, atalhos do desktop e botões na barra de tarefas.
+- Botão direito: menu do ClaQui OS. Ctrl + botão direito: menu do navegador.
+- Celular/tablet: toque prolongado (~600 ms) abre o menu de contexto.
+- Muitos programas abertos: role só a faixa central da barra de tarefas.
+
+DOCUMENTAÇÃO E TESTES
+- MANUAL-CLAQUI-OS.md ........ manual completo do sistema e do jogo
+- CHANGELOG.md ............... o que mudou, o que foi corrigido, o que ficou pendente
+- RELATORIO-TESTES.md ........ testes realizados (e os que NÃO foram)
+- INVENTARIO-ARQUIVOS.md ..... arquitetura, migração de dados e descrição de cada arquivo
+- AUDITORIA-QUESTOES.csv ..... revisão dos 534 itens do B5 → B6
+- NOVOS-ITENS-B6.csv ......... itens criados para o B6
+- tools/ ..................... geração reprodutível do B6 e das campanhas
+- tests/ ..................... testes Node e E2E (Playwright + Chrome real) e capturas
+
+PENDENTE NESTA VERSÃO
+- Paciência (jogo opcional) NÃO foi implementado.
+
+LICENÇAS
+O código é MIT (veja LICENCA-CODIGO.txt). O ícone original do ClassiQuiz não
+utiliza marca Microsoft. Veja licencas/ para os avisos existentes.
+
+NOVIDADE DA 2.0.4 — JOGO DA VELHA
+  O adversário alterna aleatoriamente entre Fácil/Médio/Difícil/Ladrão.
+  Ladrão só aparece com zero vitórias (25% por partida), pode marcar
+  um O fora da grade para roubar e possui conquista secreta.
+  Clique na peça fora da grade para contestar; Resetar limpa só o placar.
+  Placar salvo localmente a partir da versão 2.0.4.
+  Vitórias registradas nas conquistas antigas são recuperadas quando
+  possível. Derrotas e empates antigos não tinham salvamento.
+
+NOVIDADES DA 2.0.4 — EXPLORADOR E MISSÕES
+  Meu Dispositivo > Disco Local CQ: > ClaQui > System32.
+  As pastas internas do ClaQui OS contêm arquivos virtuais e reagem a exclusões fictícias.
+  O sistema restaura automaticamente as pastas internas de demonstração.
+  Duas missões utilizam arquivos reais do Explorador virtual (incluindo ocultos).
+  Nada modifica arquivos do Windows, dados do jogador ou configurações reais.

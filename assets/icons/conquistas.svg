@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" shape-rendering="crispEdges">
+<title>Conquistas</title>
+<rect x="7" y="8" width="37" height="37" fill="#062b50" opacity=".8"/>
+<rect x="3" y="3" width="39" height="39" fill="#505c70"/>
+<path d="M3 3H42V6H6V42H3Z" fill="#f5f7ff"/>
+<path d="M42 3V42H3V39H39V3Z" fill="#465062"/>
+<rect x="7" y="7" width="31" height="31" fill="#ffe2a4"/>
+<path d="M7 7H38V9H9V38H7Z" fill="#fff8dc" opacity=".72"/>
+<path d="M38 7V38H7V36H36V7Z" fill="#172b51" opacity=".32"/>
+
+<rect x="14" y="10" width="18" height="4" fill="#7f5218"/><path d="M14 14H32V21Q32 29 25 31H21Q14 29 14 21Z" fill="#d69b28"/><path d="M16 14H30V21Q30 26 23 29Q16 26 16 21Z" fill="#ffd65b"/><path d="M14 16H9V21Q9 27 16 27" fill="none" stroke="#905512" stroke-width="3"/><path d="M32 16H37V21Q37 27 30 27" fill="none" stroke="#905512" stroke-width="3"/><rect x="21" y="29" width="4" height="6" fill="#8e5f22"/><rect x="17" y="35" width="12" height="3" fill="#b9802b"/><path d="M23 16L25 20L29 20L26 23L27 27L23 25L19 27L20 23L17 20L21 20Z" fill="#fff6c3"/>
+</svg>

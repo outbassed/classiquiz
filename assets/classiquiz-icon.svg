@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 128 128" role="img" aria-labelledby="title desc" shape-rendering="crispEdges">
+<title id="title">Ícone do ClassiQuiz</title>
+<desc id="desc">Janela retrô cinza com barra azul, três controles e painel amarelo com ponto de interrogação azul.</desc>
+<g id="shadow">
+  <path fill="#0A0B10" d="M27 11H119V117H19V30H22V23H27Z"/>
+  <path fill="#161922" d="M18 32H20V116H118V118H18Z" opacity=".75"/>
+</g>
+<g id="window-frame">
+  <path fill="#555967" d="M24 6H115V112H12V27H16V21H20V13H24Z"/>
+  <path fill="#FFF" d="M24 6H114V9H26V11H23V15H20V22H16V29H15V108H12V27H16V21H20V13H24Z"/>
+  <path fill="#D9DCE2" d="M27 10H110V106H18V27H22V18H27Z"/>
+  <path fill="#A5A9B4" d="M20 104H111V11H114V109H19V106H20Z"/>
+  <path fill="#F0F1F4" d="M21 18H110V39H21Z"/>
+</g>
+<g id="title-bar">
+  <rect x="21" y="18" width="89" height="20" fill="#0413A7"/>
+  <rect x="21" y="18" width="89" height="2" fill="#1836D4"/>
+  <rect x="21" y="37" width="89" height="1" fill="#020D75"/>
+</g>
+<g id="controls" stroke-linejoin="miter">
+  <g id="minimize">
+    <rect x="63" y="22" width="13" height="13" fill="#08090F"/>
+    <rect x="62" y="21" width="13" height="13" fill="#F7F8FC"/>
+    <path d="M64 23H73V32H64Z" fill="#C7C9CE"/>
+    <rect x="64" y="29" width="7" height="2" fill="#111"/>
+    <path d="M62 21H75V23H64V34H62Z" fill="#FFF"/>
+    <path d="M75 21V34H62V32H73V23H75Z" fill="#686B74"/>
+  </g>
+  <g id="maximize">
+    <rect x="80" y="22" width="13" height="13" fill="#08090F"/>
+    <rect x="79" y="21" width="13" height="13" fill="#F7F8FC"/>
+    <path d="M81 23H90V32H81Z" fill="#C7C9CE"/>
+    <rect x="83" y="25" width="6" height="6" fill="#111"/>
+    <rect x="84" y="27" width="4" height="3" fill="#F1F1F1"/>
+    <path d="M79 21H92V23H81V34H79Z" fill="#FFF"/>
+    <path d="M92 21V34H79V32H90V23H92Z" fill="#686B74"/>
+  </g>
+  <g id="close">
+    <rect x="97" y="22" width="13" height="13" fill="#08090F"/>
+    <rect x="96" y="21" width="13" height="13" fill="#F7F8FC"/>
+    <path d="M98 23H107V32H98Z" fill="#C7C9CE"/>
+    <path d="M99 25L101 25L103 27L105 25L107 25L107 27L105 29L107 31L105 31L103 29L101 31L99 31L99 29L101 27L99 25Z" fill="#080809"/>
+    <path d="M96 21H109V23H98V34H96Z" fill="#FFF"/>
+    <path d="M109 21V34H96V32H107V23H109Z" fill="#686B74"/>
+  </g>
+</g>
+<g id="content-panel">
+  <rect x="21" y="40" width="89" height="69" fill="#757985"/>
+  <path d="M23 42H108V106H23Z" fill="#F3F4F6"/>
+  <path d="M26 45H105V103H26Z" fill="#FCCC00"/>
+  <path d="M26 45H105V48H26Z" fill="#FFE435"/>
+  <rect x="26" y="48" width="79" height="55" fill="#FFD000"/>
+  <path d="M23 42H108V44H25V106H23Z" fill="#565A61"/>
+  <path d="M108 42V106H23V104H106V44H108Z" fill="#FFFFFF"/>
+</g>
+<g id="question-mark" fill="#0814B8">
+  <path d="M48 58H53V53H76V56H81V61H85V75H81V80H76V85H71V91H61V81H66V76H71V71H75V65H71V62H59V66H54V71H45V63H48Z"/>
+  <rect x="61" y="95" width="10" height="9"/>
+</g>
+</svg>

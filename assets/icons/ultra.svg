@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" shape-rendering="crispEdges">
+<title>Ultra</title>
+<rect x="7" y="8" width="37" height="37" fill="#062b50" opacity=".8"/>
+<rect x="3" y="3" width="39" height="39" fill="#505c70"/>
+<path d="M3 3H42V6H6V42H3Z" fill="#f5f7ff"/>
+<path d="M42 3V42H3V39H39V3Z" fill="#465062"/>
+<rect x="7" y="7" width="31" height="31" fill="#702035"/>
+<path d="M7 7H38V9H9V38H7Z" fill="#c35b65" opacity=".72"/>
+<path d="M38 7V38H7V36H36V7Z" fill="#172b51" opacity=".32"/>
+
+<rect x="9" y="10" width="27" height="25" fill="#321326" stroke="#ffc968" stroke-width="2"/><path d="M23 11L27 19H35L29 24L32 33L23 28L14 33L17 24L11 19H19Z" fill="#e8aa37"/><path d="M23 13L26 20H32L27 24L29 30L23 26L17 30L19 24L14 20H20Z" fill="#ffe6a0"/><rect x="11" y="12" width="4" height="2" fill="#ffddb5"/>
+</svg>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14577f">
+<meta name="description" content="ClassiQuiz: perguntas, pegadinhas e minigames, rodando no ClaQui OS, um desktop retrô original.">
+<link rel="icon" href="assets/classiquiz-icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/os.css">
+<link rel="stylesheet" href="assets/css/apps.css">
+<link rel="stylesheet" href="assets/css/mouse.css">
+<title>ClassiQuiz 2.0.8 | Um clássico que nunca existiu</title>
+<!-- Olá, curioso(a)! Este HTML é todo do jogo. Nenhuma pergunta depende de você inspecionar nada. Mas o Claquim gosta de visitas. -->
+<script defer src="assets/js/core.js"></script>
+<script defer src="assets/js/vfs.js"></script>
+<script defer src="assets/js/wm.js"></script>
+<script defer src="assets/js/mouse.js"></script>
+<script defer src="assets/js/data.js"></script>
+<script defer src="assets/js/data-b3.js"></script>
+<script defer src="assets/js/data-b2.js"></script>
+<script defer src="assets/js/data-b1.js"></script>
+<script defer src="assets/js/data-b5.js"></script>
+<script defer src="assets/js/gen.js"></script>
+<script defer src="assets/js/data-b6.js"></script>
+<script defer src="assets/js/campaigns-b6.js"></script>
+<script defer src="assets/js/gen-b6.js"></script>
+<script defer src="assets/js/app.js"></script>
+<script defer src="assets/js/missions.js"></script>
+<script defer src="assets/js/apps-system.js"></script>
+<script defer src="assets/js/apps-files.js"></script>
+<script defer src="assets/js/apps-tools.js"></script>
+<script defer src="assets/js/ttt-ai.js"></script>
+<script defer src="assets/js/apps-games.js"></script>
+<script defer src="assets/js/apps-desvio.js"></script>
+<script defer src="assets/js/system-effects.js"></script>
+<script defer src="assets/js/main.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="wallpaper" id="wallpaper" aria-hidden="true"></div>
+  <main class="desktop" id="desktop" aria-label="Área de trabalho do ClaQui OS">
+    <div class="desktop-center-panel">
+      <div class="desktop-wallpaper-brand"><img src="assets/classiquiz-animado.gif" alt=""><div><div class="desktop-wordmark">Classi<span>Quiz</span></div><div class="desktop-tagline">UM CLÁSSICO QUE NUNCA EXISTIU</div></div></div>
+      <nav id="desktop-launchers" class="desktop-launchers" aria-label="Programas instalados">
+        <button type="button" data-act="open-app" data-app="new" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/classiquiz.svg" alt=""></span><span class="sc-label">Jogar</span></button>
+        <button type="button" data-act="open-app" data-app="resume" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/continuar.svg" alt=""></span><span class="sc-label">Continuar</span></button>
+        <button type="button" data-act="open-app" data-app="library" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/minhas-trilhas.svg" alt=""></span><span class="sc-label">Minhas Trilhas</span></button>
+        <button type="button" data-act="open-app" data-app="achievements" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/conquistas.svg" alt=""></span><span class="sc-label">Conquistas</span></button>
+        <button type="button" data-act="open-app" data-app="settings" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/configuracoes.svg" alt=""></span><span class="sc-label">Configurações</span></button>
+        <button type="button" data-act="open-app" data-app="rewards" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/recompensas.svg" alt=""></span><span class="sc-label">Recompensas</span></button>
+        <button type="button" data-act="open-app" data-app="about" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/sobre.svg" alt=""></span><span class="sc-label">Sobre</span></button>
+        <button type="button" data-act="open-app" data-app="mais" class="desktop-shortcut"><span class="shortcut-icon"><img src="assets/icons/mais-opcoes.svg" alt=""></span><span class="sc-label">Mais opções</span></button>
+      </nav>
+    </div>
+    <button type="button" data-act="open-app" data-app="ultra" class="desktop-shortcut ultra-shortcut"><span class="shortcut-icon ultra-icon"><img src="assets/icons/ultra.svg" alt=""></span><span class="sc-label">Ultra ClassiQuiz</span></button>
+  </main>
+  <div id="windows" class="windows-layer"></div>
+  <nav id="start-menu" class="start-menu" aria-label="Menu Start" role="menu"></nav>
+  <footer class="taskbar">
+    <button type="button" class="start-button" id="start-button" data-act="start-toggle" aria-expanded="false" aria-haspopup="menu"><img src="assets/classiquiz-icon.svg" alt=""><span>Start</span></button>
+    <button type="button" class="task-icon" data-act="icon-logo" title="Mostrar a área de trabalho" aria-label="Mostrar a área de trabalho"><img src="assets/classiquiz-icon.svg" alt=""></button>
+    <div class="task-programs" id="task-programs" role="group" aria-label="Programas abertos"></div>
+    <button type="button" class="task-version" data-act="version-click" title="Sobre a versão">v2.0.8</button>
+    <button type="button" id="task-clock" class="task-clock" title="Horário do dispositivo" tabindex="-1">--:--</button>
+  </footer>
+  <div id="cq-context" class="cq-context" role="menu" aria-label="Menu de contexto" hidden></div>
+  <div id="modal-layer"></div>
+  <div id="power-layer" class="power-layer" hidden></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+<noscript><p style="color:#fff;padding:20px;font-family:monospace">O ClassiQuiz precisa de JavaScript para rodar no navegador.</p></noscript>
+</body></html>

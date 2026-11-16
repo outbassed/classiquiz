@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" shape-rendering="crispEdges">
+<title>Lixeira</title>
+<rect x="7" y="8" width="37" height="37" fill="#062b50" opacity=".8"/>
+<rect x="3" y="3" width="39" height="39" fill="#505c70"/>
+<path d="M3 3H42V6H6V42H3Z" fill="#f5f7ff"/>
+<path d="M42 3V42H3V39H39V3Z" fill="#465062"/>
+<rect x="7" y="7" width="31" height="31" fill="#dfe3ea"/>
+<path d="M7 7H38V9H9V38H7Z" fill="#fff" opacity=".55"/>
+<path d="M38 7V38H7V36H36V7Z" fill="#172b51" opacity=".32"/>
+<rect x="12" y="13" width="22" height="3" fill="#5d6577"/><rect x="19" y="10" width="8" height="3" fill="#5d6577"/><path d="M13 17h20l-2 19H15z" fill="#b8c0d2"/><path d="M13 17h20l-.4 4H13.4z" fill="#e9ecf3"/><rect x="18" y="21" width="2" height="12" fill="#6a7692"/><rect x="22" y="21" width="2" height="12" fill="#6a7692"/><rect x="26" y="21" width="2" height="12" fill="#6a7692"/>
+</svg>
