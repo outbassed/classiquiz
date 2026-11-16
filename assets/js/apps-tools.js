@@ -200,7 +200,7 @@ const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julh
 const dkey = (y, m, d) => `${y}-${CQ.pad2(m + 1)}-${CQ.pad2(d)}`;
 A.calendar = {title: 'Calendário', icon: 'assets/icons/calendario.svg', bodyClass: 'page', maxDefault: false, w: 700, h: 600, persistent: true,
   render(w) {
-    const now = new Date(); if (cal.y === null) { cal.y = now.getFullYear(); cal.m = now.getMonth(); cal.sel = dkey(cal.y, cal.m, now.getDate()); }
+    const now = (() => { const p = CQ.clock.parts(); return {getFullYear: () => p.y, getMonth: () => p.mo, getDate: () => p.d}; })(); if (cal.y === null) { cal.y = now.getFullYear(); cal.m = now.getMonth(); cal.sel = dkey(cal.y, cal.m, now.getDate()); }
     const notes = CQ.store.read(CQ.KEYS.CAL, {}); const first = new Date(cal.y, cal.m, 1).getDay(), days = new Date(cal.y, cal.m + 1, 0).getDate();
     const cells = []; for (let i = 0; i < first; i++) cells.push('<span class="cd empty"></span>'); for (let d = 1; d <= days; d++) { const k = dkey(cal.y, cal.m, d), today = k === dkey(now.getFullYear(), now.getMonth(), now.getDate()); cells.push(`<button type="button" class="cd ${k === cal.sel ? 'on' : ''} ${today ? 'today' : ''} ${notes[k] ? 'has' : ''}" data-act="cal-day" data-key="${k}" aria-label="${d} de ${MESES[cal.m]}${notes[k] ? ', com nota' : ''}" aria-pressed="${k === cal.sel}">${d}</button>`); }
     w.body.innerHTML = `<div class="cal"><div class="cal-head"><button type="button" class="chrome-button tiny" data-act="cal-prev" aria-label="Mês anterior">←</button><h2>${MESES[cal.m]} de ${cal.y}</h2><button type="button" class="chrome-button tiny" data-act="cal-next" aria-label="Próximo mês">→</button><button type="button" class="chrome-button tiny" data-act="cal-today">Hoje</button></div><div class="cal-grid" role="grid">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(x => `<span class="cw">${x}</span>`).join('')}${cells.join('')}</div><label class="cal-note">Nota para ${cal.sel.split('-').reverse().join('/')}<textarea id="cal-text" class="np-text selectable" rows="4" maxlength="500">${E(notes[cal.sel] || '')}</textarea></label></div>`;
@@ -218,16 +218,16 @@ A.clock = {title: 'Relógio', icon: 'assets/icons/relogio.svg', bodyClass: 'page
   render(w) {
     w.data.off ??= 0;
     w.body.innerHTML = `<div class="clockapp"><svg viewBox="-60 -60 120 120" class="analog" role="img" aria-label="Relógio analógico"><circle r="56" fill="#fff" stroke="#172b51" stroke-width="3"/>${Array.from({length: 12}, (_, i) => `<line x1="0" y1="-50" x2="0" y2="-46" stroke="#172b51" stroke-width="2" transform="rotate(${i * 30})"/>`).join('')}<line id="h-h" y2="-28" stroke="#172b51" stroke-width="4" stroke-linecap="round"/><line id="h-m" y2="-40" stroke="#172b51" stroke-width="3" stroke-linecap="round"/><line id="h-s" y2="-44" stroke="#d33848" stroke-width="1.5"/></svg><div class="digital" id="clk-dig" role="timer" aria-live="off">--:--:--</div><div class="clk-date" id="clk-date"></div><fieldset class="clk-sim"><legend>Relógio simulado (não altera o seu aparelho)</legend><label>Deslocamento: <b id="off-v">${w.data.off}</b> h<input type="range" min="-12" max="12" step="1" value="${w.data.off}" data-act="clk-off" aria-label="Deslocamento em horas"></label></fieldset></div>`;
-    w.setTitle('Relógio'); w.setStatus('Hora local do dispositivo', '');
+    w.setTitle('Relógio'); w.setStatus('Hora do sistema (' + (CQ.clock.isManual() ? 'manual' : 'dispositivo') + ')', '');
     if (!w._bound) { w._bound = true; w.body.addEventListener('input', e => { if (e.target.dataset.act === 'clk-off') { w.data.off = Number(e.target.value); w.body.querySelector('#off-v').textContent = w.data.off; tick(w); } }); }
     clearInterval(clockTimer); tick(w); clockTimer = setInterval(() => tick(w), 500);
   },
   onClose() { clearInterval(clockTimer); }
 };
 function tick(w) {
-  const d = new Date(Date.now() + (w.data.off || 0) * 3600000), s = d.getSeconds() + d.getMilliseconds() / 1000, m = d.getMinutes() + s / 60, h = d.getHours() % 12 + m / 60;
+  const ts = CQ.clock.now() + (w.data.off || 0) * 3600000, p = CQ.clock.parts(ts), s = p.S + (((ts % 1000) + 1000) % 1000) / 1000, m = p.M + s / 60, h = p.H % 12 + m / 60;
   const set = (id, a) => { const el = w.body.querySelector(id); if (el) el.setAttribute('transform', `rotate(${a})`); }; set('#h-h', h * 30); set('#h-m', m * 6); set('#h-s', s * 6);
-  const dig = w.body.querySelector('#clk-dig'); if (dig) dig.textContent = d.toLocaleTimeString('pt-BR'); const dt = w.body.querySelector('#clk-date'); if (dt) dt.textContent = d.toLocaleDateString('pt-BR', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+  const dig = w.body.querySelector('#clk-dig'); if (dig) dig.textContent = CQ.clock.fmtTime(ts, true); const dt = w.body.querySelector('#clk-date'); if (dt) dt.textContent = CQ.clock.fmtLong(ts);
 }
 
 // =============== Reprodutor (jingles originais sintetizados) ===============

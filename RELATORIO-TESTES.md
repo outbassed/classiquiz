@@ -1,3 +1,36 @@
+# Relatório de testes — release 26nov16
+
+> Ambiente desta entrega: container Linux, Node 22, Chromium 1243 do Playwright (headless, `--no-sandbox`), sem celular físico. Tudo abaixo foi **realmente executado**; o que não foi testado está listado em "Não testado / pendências". Os resultados e as datas de execução estão na descrição do PR.
+
+## Testes de Node (`cd tests && npm run test:node`)
+| Suíte | O que cobre |
+|---|---|
+| `b6`, `legacy-seeds`, `ttt`, `vfs-204`, `calc-205`, `bsod-205`, `desvio-207`, `mouse-206`, `v209` | Regressão herdada: bancos B1–B7, 357 seeds antigas idênticas, 630 seeds B7, Jogo da Velha (Minimax X/O e Ladrão), arquivos virtuais, calculadora, tela azul, Desvio CQ, mouse. (`bsod-205` e `v209` tiveram asserções atualizadas: nome dinâmico do sistema; SW agora faz pré-cache total.) |
+| `clock-v26` (novo) | Comparador de versões (legado × data, `.1/.2/.10`, virada de ano), nome do sistema (1998/1999/2000/2001/2003/2026/2050…), relógio manual que anda/congela, ida e volta de fusos, limites e anos bissextos, 12/24 h, persistência, `tools/build.js` (versão do dia, sufixos, fuso de São Paulo, build único) e coerência `version.json` × `asset-manifest.json` × `sw.js`. |
+| `runner-v26` (novo) | Pulo ≥ 100 un., aceleração, intervalo entre obstáculos maior que o salto, **mesma partida a 30/45/60/90/120/144/240 Hz**, colisões justas construídas à mão, buffer de pulo, redimensionar sem reiniciar, conquistas sem duplicar, ausência de atalhos do Runner. |
+| `solitaire-v26` (novo) | 200 distribuições, regras de movimento, fundações, desfazer, reciclagem do monte, vitória. |
+| `web-v26` (novo) | Roteador `.cqo` (variações, 404 sem redirecionar), 2 destaques + “Mostrar mais”, `/internet` com todos os públicos e nenhum secreto, busca (sem 404), XSS, **todos os 171 links internos resolvem**, nenhum recurso externo/script/iframe nas páginas. |
+
+## E2E em Chromium real (`cd tests && npm run test:e2e:v26`)
+- **`e2e/12-v26nov16.js`**: tutorial (primeira abertura, pular, reabrir pelo Start/Mais opções/Sobre, “não mostrar novamente”); Data e Hora via interface (1999, 2000, 2003, 2026, 1998, 2050 → nome no Iniciar, Sobre e título; relógio andando; persistência; virada 1999→2000; 12 h; relógio real intacto); rede virtual (ícone ao lado do relógio, painel, desconectar → tela cinza, persistência, rostinho → Runner, reconectar pelas Configurações de Rede); ClaQui Browser (404 + “Voltar ao BuscaJá!”, variações de URL, pesquisa com e sem resultado, XSS, voltar/avançar, favoritos, histórico, abre os 13 sites, formulário do ClaquiMail); **celular 390×844**: Runner ocupa a janela, toque pula, deslizar abaixa, girar para paisagem sem reiniciar, derrota e toque reinicia, Cobrinha/Pong/Desvio CQ/Jogo da Velha/Campo Minado (segurar = bandeira)/Paciência só com toque; touchpad (formatos, limites, posições, gestos, perfis, persistência); layouts em 360 px, tablets retrato/paisagem e desktop 1920; B7 legado (resposta “Copiar” só no menu de contexto).
+- **`e2e/13-pwa-offline-update.js`**: instala o SW, confere 1 cache com todos os arquivos do manifesto, remove cache legado `cq-offline-*` sem tocar nos saves; **modo avião** (rede do navegador desligada): reinicia do zero, abre 26 apps, 5 sites, pesquisa, imagens, CSS/JS/dados/ícones/cursores, Runner secreto, ClaQui Update informa a falta de internet real; **atualização real** entre duas releases servidas pelo mesmo servidor (baixa, valida, fica aguardando, pergunta se há minijogo aberto, “Depois” não reinicia, “Atualizar e reiniciar” troca de versão, cache antigo some **depois** da transição, saves/conquistas/recordes/preferências intactos, nova versão funciona offline); **download com arquivo corrompido** é rejeitado, nenhum cache parcial sobra e o cache que funciona permanece.
+
+## Suítes E2E antigas (`tests/e2e/01…11`) — comparação com a 2.0.9
+Rodei a linha de base (código da 2.0.9) e a versão nova com o mesmo harness. Resultado depois das mudanças: `08-capturas` (38 ok), `09-papel-de-parede` (20 ok) e `10-terminal-tentativa` (11 ok) passam. As demais **já falhavam na 2.0.9** por roteiros desatualizados e continuam falhando exatamente nos mesmos pontos, sem regressão: `01` (missão `m-explore-2`), `02` (só “Mais opções contém Atualizações”; o item “8 atalhos + Ultra” foi atualizado para incluir o atalho do ClaQui Browser), `04` (espera `app: 2.0.9` na migração), `05` (seletor `[data-act="size"]`), `07` e `11` (caminhos do Explorador; no `11` o solucionador do Campo Minado às vezes trava por ser aleatório). Não foram consertadas nesta entrega (fora do escopo).
+Durante essa comparação a suíte `04` revelou um bug real que introduzi (`'touchButtons' in p` com payload de `sys:change` não-objeto); foi corrigido.
+
+## Resultado final desta entrega
+Node: 13 suítes, todas OK (B6 14.941, seeds 357, TTT 2.609, v209 15.805, relógio/versões/build 328, Runner 52, Paciência 624, Browser 382…). E2E novas: `12-v26nov16` **197 verificações, 0 falhas**; `13-pwa-offline-update` **64 verificações, 0 falhas**. Observação do teste 13: após um download corrompido, o cache parcial da tentativa existe por instantes e é removido em menos de ~1 s; o cache que funciona nunca é tocado.
+
+## Não testado / pendências
+- Nenhum aparelho Android/iOS real: o toque foi emulado pelo Chromium (eventos de ponteiro `touch`). Recomenda-se um teste manual no celular (ver descrição do PR).
+- Instalação do PWA pelo prompt do navegador e o comportamento do Safari/iOS (limites de cache do iOS) não foram verificados.
+- O arrastar de cartas da Paciência no toque foi testado por regras (Node) e por toque simples (E2E); o arrasto com dedo real não foi exercitado.
+- A atualização foi testada entre duas releases locais; a verificação contra `https://classiquiz.vercel.app` só pode ser feita depois da publicação autorizada.
+- Revisão visual crítica feita por capturas de tela em 360 px, 390 px, tablets e desktop; não foi uma auditoria exaustiva de todas as telas legadas.
+
+---
+
 ## Adendo 2.0.9 — 16/11/2026 (ambiente desta entrega)
 
 A documentação histórica abaixo refere-se a outros ambientes e versões, e não deve ser confundida com testes executados nesta entrega.

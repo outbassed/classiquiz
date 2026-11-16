@@ -213,13 +213,14 @@ OS.ultraBlocked = id => id === 'dev' && CQ.rules.ultra();
 function startItems() {
   const sections = [
     ['Principal', [['new','Jogar'],['resume','Continuar'],['library','Minhas Trilhas'],['ultra','Ultra ClassiQuiz'],['mais','Mais opções']]],
-    ['Jogos', [['mines','Campo Minado'],['ttt','Jogo da Velha'],['snake','Cobrinha'],['desvio','Desvio CQ'],['runner','Offline Runner'],['pong','Pong']]],
+    ['Internet', [['browser','ClaQui Browser'],['netconfig','Configurações de Rede']]],
+    ['Jogos', [['mines','Campo Minado'],['ttt','Jogo da Velha'],['snake','Cobrinha'],['desvio','Desvio CQ'],['solitaire','Paciência'],['pong','Pong']]],
     ['Acessórios', [['notepad','Bloco de Notas'],['paint','Paint'],['calc','Calculadora'],['calendar','Calendário'],['clock','Relógio'],['viewer','Visualizador'],['player','Reprodutor']]],
-    ['Sistema e biblioteca', [['explorer','Explorador de Arquivos'],['trash','Lixeira'],['settings','Configurações'],['achievements','Conquistas'],['rewards','Recompensas'],['stats','Estatísticas'],['favorites','Favoritas'],['updates','ClaQui Update'],['about','Sobre']]]
+    ['Sistema e biblioteca', [['explorer','Explorador de Arquivos'],['trash','Lixeira'],['settings','Configurações'],['datetime','Data e Hora'],['achievements','Conquistas'],['rewards','Recompensas'],['stats','Estatísticas'],['favorites','Favoritas'],['updates','ClaQui Update'],['tutorial','Ajuda e Tutorial'],['about','Sobre']]]
   ];
   // Programas novos entram automaticamente no menu, sem exigir alterar a lista.
   const listed = new Set(sections.flatMap(([,list]) => list.map(([id]) => id)));
-  const extra = Object.keys(CQ.apps).filter(id => !listed.has(id) && id !== 'game' && id !== 'dev' && id !== 'mais' && CQ.apps[id]?.title)
+  const extra = Object.keys(CQ.apps).filter(id => !listed.has(id) && id !== 'game' && id !== 'dev' && id !== 'mais' && !CQ.apps[id]?.hidden && CQ.apps[id]?.title)
     .map(id => [id, CQ.apps[id].title]);
   if (extra.length) sections.push(['Mais programas', extra]);
   if (!CQ.rules.ultra()) sections.push(['Ferramentas avançadas', [['dev', 'Terminal']]]);
@@ -228,7 +229,7 @@ function startItems() {
 function renderStart() {
   const m = $('start-menu'); if (!m) return;
   const sections = startItems();
-  m.innerHTML = `<div class="start-menu-title"><img src="assets/classiquiz-icon.svg" alt=""><span>ClaQui OS</span></div>` +
+  m.innerHTML = `<div class="start-menu-title"><img src="assets/classiquiz-icon.svg" alt=""><span data-osname>${E(CQ.clock ? CQ.clock.osName() : 'ClaQui OS')}</span></div>` +
     `<div class="start-menu-scroll" aria-label="Lista de programas">${sections.map(([group,items]) =>
       `<div class="start-group-title">${E(group)}</div>` + items.filter(([id]) => CQ.apps[id]).map(([id,label]) =>
         `<button type="button" role="menuitem" data-act="open-app" data-app="${E(id)}"><img class="start-item-icon" src="${E(CQ.apps[id].icon || 'assets/icons/f-desconhecido.svg')}" alt=""><span>${E(label)}</span></button>`).join('')
@@ -257,7 +258,7 @@ document.addEventListener('click', e => {
     case 'open-app': if (btn.classList.contains('desktop-shortcut') && e.detail > 0) shield = {until: performance.now() + 500, x: e.clientX, y: e.clientY}; OS.open(btn.dataset.app, btn.dataset.param ? JSON.parse(btn.dataset.param) : undefined); return;
     case 'start-toggle': toggleStart(); return;
     case 'icon-logo': showDesktopToggle(); return;
-    case 'version-click': CQ.ui.alert('Sobre o ClaQui OS', `<p><b>ClaQui OS ${CQ.VERSION}</b> — sistema fictício que roda no seu navegador.</p><p>Jogo: <b>ClassiQuiz</b> — UM CLÁSSICO QUE NUNCA EXISTIU.</p><p class="muted">Frontend puro • versão publicada online e edição local para Windows.</p>`); return;
+    case 'version-click': CQ.ui.alert('Sobre o ' + CQ.clock.osName(), `<p><b>${E(CQ.clock.osName())}</b> • ClaQui OS — sistema fictício que roda no seu navegador.</p><p>Versão <b>${E(CQ.VERSION)}</b> • compilação <b>${E(CQ.BUILD)}</b></p><p>Jogo: <b>ClassiQuiz</b> — UM CLÁSSICO QUE NUNCA EXISTIU.</p><p class="muted">Frontend puro • PWA que funciona offline depois de instalada.</p>`); return;
     case 'power-shutdown': closeStart(); OS.power('shutdown'); return;
     case 'power-restart': closeStart(); OS.power('restart'); return;
   }
@@ -273,7 +274,7 @@ function showDesktopToggle() {
 let powerBusy = false;
 async function confirmWindowsClosing(verb) {
   const open = WM.list(); if (!open.length) return true;
-  const ok = await CQ.ui.confirm(verb === 'shutdown' ? 'Desligar o ClaQui OS' : 'Reiniciar o ClaQui OS',
+  const ok = await CQ.ui.confirm(verb === 'shutdown' ? 'Desligar o ' + CQ.clock.osName() : 'Reiniciar o ' + CQ.clock.osName(),
     `<p>Existem <b>${open.length}</b> programa(s) aberto(s) (inclusive minimizados): ${open.map(w => E(w.titleEl.textContent)).join(', ')}.</p><p>Ao continuar, eles serão fechados. Seu progresso do jogo é salvo automaticamente.</p><p class="muted">Isto é uma simulação: o computador real não é desligado.</p>`, 'Confirmar', 'Cancelar');
   if (!ok) return false;
   const dirty = WM.dirtyList();
@@ -297,7 +298,7 @@ OS.power = async function (verb) {
 };
 function showPower(kind) {
   const L = $('power-layer'); L.hidden = false; L.className = 'power-layer ' + kind;
-  L.innerHTML = kind === 'restart' ? '<div class="power-msg" role="status">Reiniciando o ClaQui OS…</div>' : '<div class="power-msg fade" role="status">Desligando…</div>';
+  L.innerHTML = kind === 'restart' ? `<div class="power-msg" role="status">Reiniciando o ${E(CQ.clock.osName())}…</div>` : '<div class="power-msg fade" role="status">Desligando…</div>';
 }
 OS.bsod = function ({cause = 'system32'} = {}) { // queda FICTÍCIA, nunca do Windows real
   const L = $('power-layer'); if (L.classList.contains('bsod') && !L.hidden) return Promise.resolve(false);
@@ -307,8 +308,8 @@ OS.bsod = function ({cause = 'system32'} = {}) { // queda FICTÍCIA, nunca do Wi
   const DURATION = math ? 8000 : 10000, t0 = CQ.mono(); L.hidden = false; L.className = 'power-layer bsod';
   const seconds = Math.ceil(DURATION / 1000);
   L.innerHTML = math
-    ? `<div class="bsod-box" role="alert"><h1>ClaQui OS</h1><p>O sistema encontrou um erro matemático e precisou ser interrompido.</p><p class="code">DIVIDE_BY_ZERO</p><p>A operação realizada na Calculadora é inválida. Nenhum arquivo real foi afetado.</p><p>Reiniciando em <b id="bsod-left">${seconds}</b> segundos…</p><div class="bsod-bar"><i id="bsod-fill"></i></div></div>`
-    : `<div class="bsod-box" role="alert"><h1>ClaQui OS</h1><p>Um problema fictício foi detectado e o ClaQui OS foi interrompido para proteger o seu jogo de mentirinha.</p><p class="code">SYSTEM32_NOT_FOUND</p><p>A pasta System32 virtual foi apagada. Nada no seu computador real foi alterado.</p><p>Reiniciando em <b id="bsod-left">${seconds}</b> segundos…</p><div class="bsod-bar"><i id="bsod-fill"></i></div></div>`;
+    ? `<div class="bsod-box" role="alert"><h1 data-osname>${E(CQ.clock.osName())}</h1><p>O sistema encontrou um erro matemático e precisou ser interrompido.</p><p class="code">DIVIDE_BY_ZERO</p><p>A operação realizada na Calculadora é inválida. Nenhum arquivo real foi afetado.</p><p>Reiniciando em <b id="bsod-left">${seconds}</b> segundos…</p><div class="bsod-bar"><i id="bsod-fill"></i></div></div>`
+    : `<div class="bsod-box" role="alert"><h1 data-osname>${E(CQ.clock.osName())}</h1><p>Um problema fictício foi detectado e o ClaQui OS foi interrompido para proteger o seu jogo de mentirinha.</p><p class="code">SYSTEM32_NOT_FOUND</p><p>A pasta System32 virtual foi apagada. Nada no seu computador real foi alterado.</p><p>Reiniciando em <b id="bsod-left">${seconds}</b> segundos…</p><div class="bsod-bar"><i id="bsod-fill"></i></div></div>`;
   WM.list().forEach(w => CQ.apps[w.id]?.onShutdown?.(w));
   CQ.bus.emit(math ? 'calc:crash' : 'sys32:crash', {cause});
   return new Promise(resolve => {
@@ -333,7 +334,7 @@ const sleep = ms => new Promise(r => setTimeout(r, reduced() ? Math.min(ms, 120)
 OS.bootSequence = async function ({mode = 'returning', quick = false, tasks = []} = {}) {
   const L = $('power-layer'); const first = mode === 'first'; let skipped = false;
   L.hidden = false; L.className = 'power-layer boot';
-  L.innerHTML = `<div class="boot-box"><img class="boot-logo" src="assets/classiquiz-icon.svg" alt=""><h1>ClaQui OS</h1><p class="boot-ver">Versão ${CQ.VERSION} • compilação 2026.11</p><div class="boot-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="boot-fill"></i></div><p class="boot-line" id="boot-line" role="status">Iniciando…</p>${first ? '<button type="button" class="chrome-button tiny" id="boot-skip">Pular configuração</button>' : ''}<p class="boot-copy">ClaQui OS © 2026 — sistema fictício. Todos os direitos autorais deste jogo reservados ao ClassiQuiz.</p></div>`;
+  L.innerHTML = `<div class="boot-box"><img class="boot-logo" src="assets/classiquiz-icon.svg" alt=""><h1 data-osname>${E(CQ.clock.osName())}</h1><p class="boot-ver">Versão ${E(CQ.VERSION)} • compilação ${E(CQ.BUILD)}</p><div class="boot-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="boot-fill"></i></div><p class="boot-line" id="boot-line" role="status">Iniciando…</p>${first ? '<button type="button" class="chrome-button tiny" id="boot-skip">Pular configuração</button>' : ''}<p class="boot-copy">ClaQui OS © 2026 — sistema fictício. Todos os direitos autorais deste jogo reservados ao ClassiQuiz.</p></div>`;
   $('boot-skip')?.addEventListener('click', () => { skipped = true; });
   const line = $('boot-line'), fill = $('boot-fill'); const setP = (p, t) => { if (fill) fill.style.width = p + '%'; if (t && line) line.textContent = t; };
   const repairBoot = !!CQ.store.read('classiquiz.os.boot-repair', false);
@@ -346,7 +347,7 @@ OS.bootSequence = async function ({mode = 'returning', quick = false, tasks = []
   const welcomeText = first ? 'Seu sistema está pronto' : mode === 'restart' ? 'Bem-vindo de volta' : 'Bem-vindo de volta';
   L.className = 'power-layer welcome';
   if (first && !skipped) {
-    L.innerHTML = `<div class="welcome-box"><img class="welcome-mascot" src="assets/img/claquim.svg" alt="Claquim, o assistente do ClaQui OS"><h1>${welcomeText}</h1><p><b>ClassiQuiz</b> — UM CLÁSSICO QUE NUNCA EXISTIU.</p><p class="muted-w">Tudo roda aqui no navegador. Nada é enviado a lugar nenhum.</p><button type="button" class="chrome-button primary big" id="welcome-go" data-autofocus="1">Iniciar</button></div>`;
+    L.innerHTML = `<div class="welcome-box"><img class="welcome-mascot" src="assets/img/claquim.svg" alt="Claquim, o assistente do ClaQui OS"><h1>${welcomeText}</h1><p>Bem-vindo ao <b data-osname>${E(CQ.clock.osName())}</b>.</p><p><b>ClassiQuiz</b> — UM CLÁSSICO QUE NUNCA EXISTIU.</p><p class="muted-w">Tudo roda aqui no navegador. Nada é enviado a lugar nenhum.</p><button type="button" class="chrome-button primary big" id="welcome-go" data-autofocus="1">Iniciar</button></div>`;
     await new Promise(res => { const b = $('welcome-go'); b.addEventListener('click', res); b.focus(); });
   } else {
     L.innerHTML = `<div class="welcome-box small"><img class="welcome-mascot" src="assets/img/claquim.svg" alt=""><h1>${first ? welcomeText : 'Bem-vindo de volta'}</h1></div>`; await sleep(first ? 200 : quick ? 500 : 800);
@@ -359,14 +360,13 @@ OS.bootSequence = async function ({mode = 'returning', quick = false, tasks = []
 
 // =============== inicialização geral ===============
 OS.start = async function (hooks = {}) {
-  CQ.easterEggs(); CQ.migrate(); applyScale(); OS.applyTheme(); OS.applyWallpaper();
+  CQ.easterEggs(); CQ.migrate(); CQ.clock.applyName(); const tv0 = $('task-version'); if (tv0) tv0.textContent = 'v' + CQ.VERSION; applyScale(); OS.applyTheme(); OS.applyWallpaper();
   const fromRestart = (() => { try { const v = sessionStorage.getItem('cq.restart'); sessionStorage.removeItem('cq.restart'); return v === '1'; } catch { return false; } })();
   const first = !CQ.sys.get('bootCompleted');
   const tasks = first ? [() => CQ.vfs.init(), () => hooks.beforeDesktop?.(), () => OS.applyTheme(), () => applyScale(), () => OS.applyWallpaper()] : [async () => { await CQ.vfs.init(); await OS.applyWallpaper(); await hooks.beforeDesktop?.(); }];
   await OS.bootSequence({mode: first ? 'first' : fromRestart ? 'restart' : 'returning', tasks});
   hooks.afterDesktop?.(); updateTaskbar(); updateDesktopInert();
-  setInterval(() => { const c = $('task-clock'); if (c) c.textContent = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'}); }, 15000);
-  const c = $('task-clock'); if (c) c.textContent = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+  CQ.clock.start(); const tv = $('task-version'); if (tv) tv.textContent = 'v' + CQ.VERSION;
 };
 // ícones da área de trabalho: atualizam rótulo/ícone a partir dos registros
 OS.registerDesktop = function () { for (const b of document.querySelectorAll('[data-app]')) { const def = CQ.apps[b.dataset.app]; if (def && b.querySelector('img')) b.querySelector('img').src = def.icon; } };

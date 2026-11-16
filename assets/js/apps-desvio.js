@@ -46,6 +46,7 @@ function tick(dt){
   const k=game.motion,dx=Number(k.right)-Number(k.left),dy=Number(k.down)-Number(k.up),norm=Math.hypot(dx,dy)||1;
   game.x=clamp(game.x+dx/norm*235*dt,14,W-14);
   game.y=clamp(game.y+dy/norm*235*dt,18,H-14);
+  if(game.target){const tx=clamp(game.target.x,14,W-14),ty=clamp(game.target.y,18,H-14),ddx=tx-game.x,ddy=ty-game.y,dd=Math.hypot(ddx,ddy);if(dd>.5){const st=Math.min(dd,520*dt);game.x+=ddx/dd*st;game.y+=ddy/dd*st;}}   // arrastar o dedo: o personagem segue com velocidade limitada
   if(game.elapsed>=120 && !game.runMarked){game.runMarked=true;stats('desvio120');}
   if(game.levelTime>=LEVEL_SECONDS){
     game.levelTime-=LEVEL_SECONDS;
@@ -148,6 +149,13 @@ function bind(w){
     const v=DIRS[d];game.x=clamp(game.x+v[0]*17,14,W-14);game.y=clamp(game.y+v[1]*17,18,H-14);
   });
   for(const ev of ['pointerup','pointercancel','lostpointercapture'])root.addEventListener(ev,e=>{const b=e.target.closest('[data-dir]');if(b)setDir(b.dataset.dir,false);});
+  // Toque/arrastar: o dedo move o personagem de forma relativa (o dedo não cobre o personagem); toque simples inicia ou pausa.
+  const cv=root.querySelector('#desvio-cv');
+  if(cv){let drag=null;
+    const pos=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};};
+    cv.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button>0)return;e.preventDefault();const p=pos(e);drag={id:e.pointerId,p0:p,x0:game.x,y0:game.y,moved:false,t:performance.now()};try{cv.setPointerCapture(e.pointerId);}catch{}if(!game.started||game.over){start();}else if(game.paused)game.paused=false;});
+    cv.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;const p=pos(e),dx=p.x-drag.p0.x,dy=p.y-drag.p0.y;if(Math.hypot(dx,dy)>4)drag.moved=true;game.target={x:drag.x0+dx*1.25,y:drag.y0+dy*1.25};e.preventDefault();});
+    const end=e=>{if(!drag||e.pointerId!==drag.id)return;drag=null;game.target=null;};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);}
   root.addEventListener('focusout',e=>{if(!root.contains(e.relatedTarget))Object.keys(game.motion).forEach(d=>game.motion[d]=false);});
 }
 A.desvio={title:'Desvio CQ',icon:'assets/icons/desvio.svg',bodyClass:'page',maxDefault:false,w:650,h:710,persistent:true,
@@ -161,8 +169,8 @@ A.desvio={title:'Desvio CQ',icon:'assets/icons/desvio.svg',bodyClass:'page',maxD
         <div><button type="button" data-dir="left" aria-label="Esquerda">←</button><button type="button" data-dir="down" aria-label="Baixo">↓</button><button type="button" data-dir="right" aria-label="Direita">→</button></div>
       </div>
       <div class="actions"><button class="chrome-button primary" type="button" data-dodge="new">Nova partida</button>
-        <button class="chrome-button" type="button" data-dodge="toggle">Iniciar / Pausar</button></div>
-      <p class="muted">Setas ou WASD no teclado, botões no celular. Desvie dos obstáculos, pegue bônus e avance por níveis sem fim predefinido. Cada nível dura 20 segundos.</p>
+        <button class="chrome-button" type="button" data-dodge="toggle">Iniciar / Pausar</button>${CQ.touch?CQ.touch.toggleHtml():''}</div>
+      <p class="muted">Setas ou WASD no teclado; no celular, arraste o dedo na arena (botões opcionais em “Botões na tela”). Desvie dos obstáculos, pegue bônus e avance por níveis sem fim predefinido. Cada nível dura 20 segundos.</p>
     </section>`;
     w.setTitle('Desvio CQ');w.setStatus('Arcade autoral • níveis ilimitados','ClaQui OS');bind(w);
     clearInterval(game.timer);game.last=performance.now();game.timer=setInterval(()=>{

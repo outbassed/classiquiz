@@ -1,4 +1,4 @@
-# Inventário de arquivos — ClassiQuiz 2.0.9
+# Inventário de arquivos — ClassiQuiz 26nov16
 
 Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis** (bancos B1–B5) não foram alterados; **GERADO** significa que é saída reprodutível de `tools/`.
 
@@ -23,37 +23,45 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 
 | Arquivo | Tamanho | Descrição |
 |---|---|---|
+| `.gitignore` | 46 B | — |
+| `asset-manifest.json` | 59.7 KB | GERADO por tools/build.js: lista de todos os arquivos do jogo com tamanho e SHA-256 (pré-cache do Service Worker). |
 | `AUDITORIA-QUESTOES.csv` | 141.8 KB | Auditoria dos 534 itens do B5: ação (mantida/ajustada/reescrita/removida), motivo e item equivalente no B6. |
-| `CHANGELOG.md` | 19.0 KB | Histórico de mudanças, correções e pendências da v2.0.9. |
-| `index.html` | 6.2 KB | Página única do ClaQui OS: casca da área de trabalho, barra de tarefas e ordem de carregamento dos scripts. |
+| `CHANGELOG.md` | 25.4 KB | Histórico de mudanças, correções e pendências da v2.0.9. |
+| `index.html` | 7.3 KB | Página única do ClaQui OS: casca da área de trabalho, barra de tarefas e ordem de carregamento dos scripts. |
 | `INICIAR-CLASSIQUIZ.bat` | 1.9 KB | Inicializador para Windows (PowerShell → Python → Node → abre index.html direto). |
 | `INVENTARIO-ARQUIVOS.md` | 49.1 KB | Este arquivo (gerado por tools/gerar-inventario.js). |
 | `launcher.js` | 1.4 KB | Servidor HTTP local em Node. |
 | `launcher.ps1` | 5.2 KB | Servidor HTTP local em PowerShell (porta 8765). |
 | `launcher.py` | 1.6 KB | Servidor HTTP local em Python. |
-| `LEIA-ME.txt` | 8.9 KB | Como abrir, o que mudou, dados preservados e pendências. |
+| `LEIA-ME.txt` | 10.6 KB | Como abrir, o que mudou, dados preservados e pendências. |
 | `LICENCA-CODIGO.txt` | 1.0 KB | Licença MIT do código. |
-| `manifest.webmanifest` | 593 B | Manifest de instalação do PWA online. |
-| `MANUAL-CLAQUI-OS.md` | 16.4 KB | Manual do sistema e do jogo. |
+| `manifest.webmanifest` | 593 B | Manifest de instalação do PWA. |
+| `MANUAL-CLAQUI-OS.md` | 21.1 KB | Manual do sistema e do jogo. |
 | `NOVOS-ITENS-B6.csv` | 18.4 KB | Itens criados do zero para o banco B6. |
-| `offline.html` | 4.5 KB | Tela sem internet e easter egg Offline Runner. |
+| `offline.html` | 4.0 KB | Tela global de exceção (instalação incompleta); o Offline Runner agora é segredo do ClaQui Browser. |
 | `RELATORIO-TESTES.md` | 27.7 KB | Relatório honesto dos testes executados e não executados. |
-| `sw.js` | 726 B | Service worker com cache restrito aos recursos offline. |
-| `version.json` | 162 B | Versão de referência para consulta pelo ClaQui Update. |
+| `sw.js` | 4.8 KB | Service Worker: pré-cache de todo o jogo por compilação, validação antes de ativar, limpeza dos caches antigos (linha BUILD carimbada pela ferramenta de build). |
+| `vercel.json` | 377 B | Cabeçalhos HTTP: sw.js, version.json e asset-manifest.json nunca ficam em cache. |
+| `version.json` | 234 B | Versão de referência para consulta pelo ClaQui Update. |
 
 ### assets/js
 
 | Arquivo | Tamanho | Descrição |
 |---|---|---|
-| `assets/js/app.js` | 79.5 KB | Jogo: estado da partida, renderização das etapas, conquistas, biblioteca, Ultra, Fichas, janelas do jogo. |
-| `assets/js/apps-desvio.js` | 10.6 KB | Desvio CQ: arcade de obstáculos, bônus, níveis contínuos, recorde e teto de dificuldade. |
+| `assets/js/app.js` | 80.3 KB | Jogo: estado da partida, renderização das etapas, conquistas, biblioteca, Ultra, Fichas, janelas do jogo. |
+| `assets/js/apps-browser.js` | 18.2 KB | ClaQui Browser: janela, navegação, favoritos, histórico, tela offline e Runner secreto. |
+| `assets/js/apps-datetime.js` | 11.5 KB | Janela Data e Hora. |
+| `assets/js/apps-desvio.js` | 12.0 KB | Desvio CQ: arcade de obstáculos, bônus, níveis contínuos, recorde e teto de dificuldade. |
 | `assets/js/apps-files.js` | 19.0 KB | Explorador de Arquivos, Lixeira e Visualizador. |
-| `assets/js/apps-games.js` | 25.9 KB | Campo Minado, Jogo da Velha, Cobrinha, Pong. |
-| `assets/js/apps-runner.js` | 710 B | Janela do Offline Runner dentro do ClaQui OS. |
-| `assets/js/apps-system.js` | 41.4 KB | Configurações, Terminal + UAC, Sobre, Atualizações, Estatísticas, Recompensas, pasta Mais opções sem Outros. |
-| `assets/js/apps-tools.js` | 26.6 KB | Bloco de Notas, Calculadora, Paint, Calendário, Relógio, Reprodutor. |
+| `assets/js/apps-games.js` | 26.2 KB | Campo Minado, Jogo da Velha, Cobrinha, Pong. |
+| `assets/js/apps-net.js` | 8.6 KB | Rede virtual, ícone da bandeja, painel e janela Configurações de Rede. |
+| `assets/js/apps-solitaire.js` | 11.5 KB | Paciência (Klondike) por toque. |
+| `assets/js/apps-system.js` | 37.6 KB | Configurações, Terminal + UAC, Sobre, Atualizações, Estatísticas, Recompensas, pasta Mais opções sem Outros. |
+| `assets/js/apps-tools.js` | 26.7 KB | Bloco de Notas, Calculadora, Paint, Calendário, Relógio, Reprodutor. |
+| `assets/js/build-info.js` | 147 B | GERADO: versão e compilação embutidas no cliente. |
 | `assets/js/campaigns-b6.js` | 2.5 KB | Tabela fixa e curada das campanhas ClassiQuiz 1/2/3 (GERADA por tools/curate-campaigns.js). |
-| `assets/js/core.js` | 11.1 KB | Núcleo: namespace CQ, armazenamento, migração idempotente, modais, barramento de eventos, som. |
+| `assets/js/clock.js` | 8.7 KB | Comparador de versões (semântica legada e por data) e relógio simulado/nome dinâmico do sistema. |
+| `assets/js/core.js` | 12.2 KB | Núcleo: namespace CQ, armazenamento, migração idempotente, modais, barramento de eventos, som. |
 | `assets/js/data-b1.js` | 20.4 KB | Dados do banco B1 (imutável). |
 | `assets/js/data-b2.js` | 26.0 KB | Dados do banco B2 (imutável). |
 | `assets/js/data-b3.js` | 35.2 KB | Dados do banco B3 (imutável). |
@@ -66,13 +74,18 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `assets/js/main.js` | 434 B | Ponto de entrada: inicia o sistema e o jogo. |
 | `assets/js/missions.js` | 8.6 KB | Motor das missões de programa (Bloco de Notas, Calculadora, Paint, Explorador, Lixeira, Visualizador, manter aberto). |
 | `assets/js/mouse.js` | 3.2 KB | Ponteiros com caminhos absolutos, PNG/SVG e 15 papéis. |
-| `assets/js/offline-runner.js` | 7.8 KB | Motor original do Offline Runner compartilhado entre app e tela offline. |
-| `assets/js/pwa.js` | 331 B | Registro do service worker do PWA. |
+| `assets/js/offline-runner.js` | 17.9 KB | Motor original do Offline Runner compartilhado entre app e tela offline. |
 | `assets/js/system-effects.js` | 2.0 KB | Efeitos seguros e temporários das exclusões fictícias de pastas do ClaQui OS. |
-| `assets/js/touchpad.js` | 5.7 KB | Touchpad virtual opcional para dispositivos móveis. |
+| `assets/js/touch.js` | 2.5 KB | Gestos de toque compartilhados pelos minijogos. |
+| `assets/js/touchpad.js` | 11.7 KB | Touchpad virtual opcional para dispositivos móveis. |
 | `assets/js/ttt-ai.js` | 4.6 KB | Motor puro do Jogo da Velha: quatro estratégias, Minimax e geometria da fraude. |
+| `assets/js/tutorial.js` | 8.5 KB | Assistente Primeiros passos e novidades da release. |
+| `assets/js/update.js` | 12.0 KB | ClaQui Update e registro do Service Worker. |
 | `assets/js/vfs.js` | 24.5 KB | Sistema de arquivos VIRTUAL (IndexedDB): pastas, arquivos, Lixeira, System32 fictício, pastas de casos (puzzles). |
-| `assets/js/wm.js` | 31.9 KB | ClaQui OS: gerenciador de janelas, barra de tarefas, menu Iniciar, menu de contexto, boot, energia, tela azul fictícia. |
+| `assets/js/web-core.js` | 6.0 KB | Roteador virtual .cqo, catálogo e busca do BuscaJá!. |
+| `assets/js/web-sites-a.js` | 24.4 KB | Sites fictícios: BuscaJá!, ClaquiMail, BatePapo, Jogolândia e Geocidades. |
+| `assets/js/web-sites-b.js` | 15.6 KB | Sites fictícios: ClaquiPédia, Tempo Certo, BaixaTudo, Lojão CQ, Diário do Milharal e três secretos. |
+| `assets/js/wm.js` | 32.3 KB | ClaQui OS: gerenciador de janelas, barra de tarefas, menu Iniciar, menu de contexto, boot, energia, tela azul fictícia. |
 
 ### assets/css e mídia
 
@@ -84,6 +97,7 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `assets/css/mouse.css` | 5.4 KB | Cursores do ClaQui OS e área de teste. |
 | `assets/css/os.css` | 17.4 KB | Estilos do ClaQui OS (janelas, barra, menus, boot). |
 | `assets/css/style.css` | 21.4 KB | Estilos base e do jogo. |
+| `assets/css/web.css` | 25.9 KB | Estilos da rede, navegador, sites .cqo, Data e Hora, tutorial, Paciência e touchpad. |
 | `assets/cursors/aero-busy-24.png` | 971 B | Cursor PNG original para compatibilidade com Chrome. |
 | `assets/cursors/aero-busy-24.svg` | 337 B | Cursor SVG original (fallback). |
 | `assets/cursors/aero-busy-32.png` | 1.2 KB | Cursor PNG original para compatibilidade com Chrome. |
@@ -455,6 +469,7 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 
 | Arquivo | Tamanho | Descrição |
 |---|---|---|
+| `assets/icons/ajuda.svg` | 875 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/atualizacoes.svg` | 780 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/bloco-de-notas.svg` | 1.0 KB | Ícone SVG autoral do programa/menu. |
 | `assets/icons/calculadora.svg` | 1.1 KB | Ícone SVG autoral do programa/menu. |
@@ -465,6 +480,7 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `assets/icons/configuracoes.svg` | 941 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/conquistas.svg` | 1.1 KB | Ícone SVG autoral do programa/menu. |
 | `assets/icons/continuar.svg` | 767 B | Ícone SVG autoral do programa/menu. |
+| `assets/icons/data-hora.svg` | 960 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/desvio.svg` | 378 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/estatisticas.svg` | 832 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/explorador.svg` | 1.0 KB | Ícone SVG autoral do programa/menu. |
@@ -482,13 +498,19 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `assets/icons/lixeira.svg` | 922 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/mais-opcoes.svg` | 894 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/minhas-trilhas.svg` | 958 B | Ícone SVG autoral do programa/menu. |
+| `assets/icons/navegador.svg` | 951 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/nova-trilha.svg` | 898 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/outros.svg` | 941 B | Ícone SVG autoral do programa/menu. |
+| `assets/icons/paciencia.svg` | 1.1 KB | Ícone SVG autoral do programa/menu. |
 | `assets/icons/paint.svg` | 986 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/pong.svg` | 936 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/recompensas.svg` | 814 B | Ícone SVG autoral do programa/menu. |
+| `assets/icons/rede-off.svg` | 849 B | Ícone SVG autoral do programa/menu. |
+| `assets/icons/rede-on.svg` | 844 B | Ícone SVG autoral do programa/menu. |
+| `assets/icons/rede.svg` | 972 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/relogio.svg` | 981 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/reprodutor.svg` | 797 B | Ícone SVG autoral do programa/menu. |
+| `assets/icons/segredo.svg` | 748 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/sobre.svg` | 854 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/terminal.svg` | 521 B | Ícone SVG autoral do programa/menu. |
 | `assets/icons/ultra.svg` | 854 B | Ícone SVG autoral do programa/menu. |
@@ -513,10 +535,12 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 |---|---|---|
 | `tools/b6-fonte/` | - | Fonte editorial do B6: correções por item (ov-*.js), itens novos (new-std.js) e conteúdo (content.js). |
 | `tools/build-b6.js` | 10.9 KB | Gera data-b6.js e os CSV de auditoria a partir do B5 + correções + conteúdo novo. |
+| `tools/build.js` | 6.7 KB | Ferramenta de release: gera versão por data, compilação, version.json, build-info.js, asset-manifest.json e carimba o sw.js. |
 | `tools/curate-campaigns.js` | 7.1 KB | Gera campaigns-b6.js (curadoria das 3 campanhas). |
-| `tools/gerar-inventario.js` | 14.1 KB | Gera este inventário. |
+| `tools/gerar-inventario.js` | 16.2 KB | Gera este inventário. |
 | `tools/loaddata.js` | 576 B | Carrega os bancos no Node com um "window" falso. |
 | `tools/make-cursors.py` | 7.9 KB | — |
+| `tools/make-icons-v26.js` | 4.2 KB | — |
 | `tools/make-icons.js` | 16.3 KB | Gera os ícones e mascotes SVG autorais. |
 | `tools/make-wallpapers.js` | 5.4 KB | Gera os papéis de parede SVG autorais. |
 
@@ -525,9 +549,10 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | Arquivo | Tamanho | Descrição |
 |---|---|---|
 | `tests/b6.test.js` | 14.2 KB | Teste Node do B6/Ultra v2/campanhas/Show (14 941 verificações; 276 Trilhas e 360 Ultras). |
-| `tests/bsod-205.test.js` | 2.4 KB | Testa a tela azul por divisão por zero, boot virtual, e preserva a tela azul de System32. |
+| `tests/bsod-205.test.js` | 2.5 KB | Testa a tela azul por divisão por zero, boot virtual, e preserva a tela azul de System32. |
 | `tests/calc-205.test.js` | 3.7 KB | Testa primeira divisão por zero, erro recorrente, operações encadeadas e persistência da Calculadora. |
-| `tests/capturas/` | - | 100 capturas PNG reais (Capturas de tela REAIS (Chrome) geradas pelos testes E2E.) |
+| `tests/capturas/` | - | 104 capturas PNG reais (Capturas de tela REAIS (Chrome) geradas pelos testes E2E.) |
+| `tests/clock-v26.test.js` | 7.7 KB | Versões, relógio, nome do sistema e build. |
 | `tests/desvio-207.test.js` | 4.0 KB | Verifica progressão ilimitada até níveis 256/1000 e hierarquia de atalhos. |
 | `tests/e2e/01-campanhas.js` | 1.7 KB | Joga as 3 campanhas inteiras. |
 | `tests/e2e/02-sistema.js` | 12.8 KB | Área de trabalho, Start, barra, menu de contexto, Configurações, Terminal/UAC, energia. |
@@ -540,7 +565,9 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `tests/e2e/09-papel-de-parede.js` | 4.6 KB | Papel de parede: presets, ajustes, importação, persistência. |
 | `tests/e2e/10-terminal-tentativa.js` | 4.4 KB | Terminal × conquistas × elegibilidade da tentativa. |
 | `tests/e2e/11-aceitacao.js` | 20.9 KB | Checklist complementar: barra de tarefas, F12 livre, Campo Minado, Paint, F5 de campanha/investigação, Milhonário com erro, resoluções. |
-| `tests/e2e/lib.js` | 3.3 KB | Utilitários E2E (Playwright + Chrome real). |
+| `tests/e2e/12-v26nov16.js` | 33.3 KB | E2E: tutorial, data/hora, rede, navegador, Runner e minijogos por toque. |
+| `tests/e2e/13-pwa-offline-update.js` | 15.6 KB | E2E: PWA offline e atualização entre duas releases. |
+| `tests/e2e/lib.js` | 3.8 KB | Utilitários E2E (Playwright + Chrome real). |
 | `tests/e2e/play.js` | 11.4 KB | Resolvedor automático pela interface real de todos os tipos de etapa. |
 | `tests/e2e/run-all.js` | 1.2 KB | Executa todas as suítes E2E (opção --longos). |
 | `tests/e2e/server.js` | 1.1 KB | Servidor estático local dos testes. |
@@ -548,10 +575,13 @@ Gerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis
 | `tests/legacy-seeds.test.js` | 1.5 KB | Compara 327 seeds antigas com a v1.2.2 original (357 verificações). |
 | `tests/lib/load.js` | 709 B | Carregador de scripts do navegador para os testes Node. |
 | `tests/mouse-206.test.js` | 2.2 KB | Valida caminhos absolutos e 180 PNGs/180 SVGs de cursores. |
-| `tests/package.json` | 616 B | Dependência de teste (playwright-core) e scripts npm. |
+| `tests/package.json` | 726 B | Dependência de teste (playwright-core) e scripts npm. |
+| `tests/runner-v26.test.js` | 7.7 KB | Física e justiça do Runner. |
+| `tests/solitaire-v26.test.js` | 3.4 KB | Regras da Paciência. |
 | `tests/ttt.test.js` | 2.7 KB | Testes Node das probabilidades, geometria da fraude e algoritmo Minimax perfeito. |
-| `tests/v209.test.js` | 4.6 KB | Regressão B7, Minimax X/O, conquistas offline e PWA da versão 2.0.9. |
+| `tests/v209.test.js` | 4.8 KB | Regressão B7, Minimax X/O, conquistas offline e PWA da versão 2.0.9. |
 | `tests/vfs-204.test.js` | 2.7 KB | Testes Node de migração, navegação, arquivos ocultos, exclusões e restauração do disco virtual. |
+| `tests/web-v26.test.js` | 5.4 KB | Roteador, busca, XSS e links dos sites. |
 
 ### licencas
 
