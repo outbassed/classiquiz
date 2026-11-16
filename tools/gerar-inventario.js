@@ -3,7 +3,7 @@ const fs = require('fs'), path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const D = [
   // raiz
-  ['manifest.webmanifest','Manifest de instalação do PWA online.'], ['offline.html','Tela sem internet e easter egg Offline Runner.'], ['sw.js','Service worker com cache restrito aos recursos offline.'], ['version.json','Versão de referência para consulta pelo ClaQui Update.'],
+  ['manifest.webmanifest','Manifest de instalação do PWA.'], ['offline.html','Tela global de exceção (instalação incompleta); o Offline Runner agora é segredo do ClaQui Browser.'], ['asset-manifest.json','GERADO por tools/build.js: lista de todos os arquivos do jogo com tamanho e SHA-256 (pré-cache do Service Worker).'], ['sw.js','Service Worker: pré-cache de todo o jogo por compilação, validação antes de ativar, limpeza dos caches antigos (linha BUILD carimbada pela ferramenta de build).'], ['vercel.json','Cabeçalhos HTTP: sw.js, version.json e asset-manifest.json nunca ficam em cache.'], ['tools/build.js','Ferramenta de release: gera versão por data, compilação, version.json, build-info.js, asset-manifest.json e carimba o sw.js.'], ['version.json','Versão de referência para consulta pelo ClaQui Update.'],
   ['index.html', 'Página única do ClaQui OS: casca da área de trabalho, barra de tarefas e ordem de carregamento dos scripts.'],
   ['INICIAR-CLASSIQUIZ.bat', 'Inicializador para Windows (PowerShell → Python → Node → abre index.html direto).'],
   ['launcher.ps1', 'Servidor HTTP local em PowerShell (porta 8765).'], ['launcher.py', 'Servidor HTTP local em Python.'], ['launcher.js', 'Servidor HTTP local em Node.'],
@@ -13,6 +13,25 @@ const D = [
   ['AUDITORIA-QUESTOES.csv', 'Auditoria dos 534 itens do B5: ação (mantida/ajustada/reescrita/removida), motivo e item equivalente no B6.'],
   ['NOVOS-ITENS-B6.csv', 'Itens criados do zero para o banco B6.'], ['licencas', 'Avisos de licença herdados.'],
   // scripts
+  ['tests/e2e/13-pwa-offline-update.js', 'E2E: PWA offline e atualização entre duas releases.'],
+  ['tests/e2e/12-v26nov16.js', 'E2E: tutorial, data/hora, rede, navegador, Runner e minijogos por toque.'],
+  ['tests/web-v26.test.js', 'Roteador, busca, XSS e links dos sites.'],
+  ['tests/solitaire-v26.test.js', 'Regras da Paciência.'],
+  ['tests/runner-v26.test.js', 'Física e justiça do Runner.'],
+  ['tests/clock-v26.test.js', 'Versões, relógio, nome do sistema e build.'],
+  ['assets/css/web.css', 'Estilos da rede, navegador, sites .cqo, Data e Hora, tutorial, Paciência e touchpad.'],
+  ['assets/js/apps-solitaire.js', 'Paciência (Klondike) por toque.'],
+  ['assets/js/touch.js', 'Gestos de toque compartilhados pelos minijogos.'],
+  ['assets/js/update.js', 'ClaQui Update e registro do Service Worker.'],
+  ['assets/js/tutorial.js', 'Assistente Primeiros passos e novidades da release.'],
+  ['assets/js/apps-datetime.js', 'Janela Data e Hora.'],
+  ['assets/js/apps-browser.js', 'ClaQui Browser: janela, navegação, favoritos, histórico, tela offline e Runner secreto.'],
+  ['assets/js/web-sites-b.js', 'Sites fictícios: ClaquiPédia, Tempo Certo, BaixaTudo, Lojão CQ, Diário do Milharal e três secretos.'],
+  ['assets/js/web-sites-a.js', 'Sites fictícios: BuscaJá!, ClaquiMail, BatePapo, Jogolândia e Geocidades.'],
+  ['assets/js/web-core.js', 'Roteador virtual .cqo, catálogo e busca do BuscaJá!.'],
+  ['assets/js/apps-net.js', 'Rede virtual, ícone da bandeja, painel e janela Configurações de Rede.'],
+  ['assets/js/build-info.js', 'GERADO: versão e compilação embutidas no cliente.'],
+  ['assets/js/clock.js', 'Comparador de versões (semântica legada e por data) e relógio simulado/nome dinâmico do sistema.'],
   ['assets/js/core.js', 'Núcleo: namespace CQ, armazenamento, migração idempotente, modais, barramento de eventos, som.'],
   ['assets/js/vfs.js', 'Sistema de arquivos VIRTUAL (IndexedDB): pastas, arquivos, Lixeira, System32 fictício, pastas de casos (puzzles).'],
   ['assets/js/system-effects.js', 'Efeitos seguros e temporários das exclusões fictícias de pastas do ClaQui OS.'],
@@ -31,8 +50,6 @@ const D = [
   ['assets/js/apps-games.js', 'Campo Minado, Jogo da Velha, Cobrinha, Pong.'], ['assets/js/apps-desvio.js', 'Desvio CQ: arcade de obstáculos, bônus, níveis contínuos, recorde e teto de dificuldade.'], ['assets/js/main.js', 'Ponto de entrada: inicia o sistema e o jogo.'],
   ['assets/js/touchpad.js','Touchpad virtual opcional para dispositivos móveis.'],
   ['assets/js/offline-runner.js','Motor original do Offline Runner compartilhado entre app e tela offline.'],
-  ['assets/js/apps-runner.js','Janela do Offline Runner dentro do ClaQui OS.'],
-  ['assets/js/pwa.js','Registro do service worker do PWA.'],
   ['assets/offline-sad.svg','Ícone cinza triste offline do ClassiQuiz.'],
   ['assets/pwa-192.png','Ícone PWA 192 pixels.'], ['assets/pwa-512.png','Ícone PWA 512 pixels.'],
   ['assets/js/mouse.js', 'Ponteiros com caminhos absolutos, PNG/SVG e 15 papéis.'], ['assets/css/mouse.css', 'Cursores do ClaQui OS e área de teste.'],
@@ -88,7 +105,7 @@ const INTRO = [
   '- Verificação: `tests/e2e/04-migracao-mobile.js` (dados no formato v1.2.2 → migração → recarregar 3 vezes sem alteração) e `tests/legacy-seeds.test.js` (327 seeds antigas × v1.2.2 original).',
   ''
 ].join('\n');
-let md = '# Inventário de arquivos — ClassiQuiz 2.0.9\n\nGerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis** (bancos B1–B5) não foram alterados; **GERADO** significa que é saída reprodutível de `tools/`.\n\n' + INTRO + '\n## Arquivos\n\n';
+let md = '# Inventário de arquivos — ClassiQuiz 26nov16\n\nGerado por `node tools/gerar-inventario.js`. Arquivos marcados como **imutáveis** (bancos B1–B5) não foram alterados; **GERADO** significa que é saída reprodutível de `tools/`.\n\n' + INTRO + '\n## Arquivos\n\n';
 const seen = new Set();
 for (const [title, f] of groups) { const rows = out.filter(r => f(r[0]) && !seen.has(r[0])); if (!rows.length) continue; rows.forEach(r => seen.add(r[0])); md += `### ${title}\n\n| Arquivo | Tamanho | Descrição |\n|---|---|---|\n` + rows.map(r => `| \`${r[0]}\` | ${kb(r[1])} | ${r[2]} |`).join('\n') + '\n\n'; }
 fs.writeFileSync(path.join(ROOT, 'INVENTARIO-ARQUIVOS.md'), md); console.log('inventário: ' + out.length + ' entradas');

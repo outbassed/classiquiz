@@ -81,7 +81,7 @@ function trackVisit(site) {
 
 // =============== tela cinza de conexão perdida + Offline Runner secreto ===============
 function showOffline(w, entry) {
-  const b = w.data.br, vp = $q(w, '.br-viewport'); mountCleanup(w); endRunner(w); b.mode = 'offline'; b.current = null;
+  const b = w.data.br, vp = $q(w, '.br-viewport'); b.token++; clearTimeout(b.timer); setProgress(w, 0, false); mountCleanup(w); endRunner(w); b.mode = 'offline'; b.current = null;   // cancela carregamento pendente
   const url = entry ? entry.url : (b.stack[b.i] || {}).url || '';
   vp.innerHTML = `<div class="br-offline"><div class="br-offline-pics" aria-label="Conexão perdida">${GLOBE}<button type="button" class="br-sad" data-br="sad" title="ClassiQuiz indisponível" aria-label="Ícone triste do ClassiQuiz"><img src="assets/offline-sad.svg" alt="Rostinho triste do ClassiQuiz"></button></div>
     <h1>Sem conexão com a rede do ClaQui OS</h1><p>O ClaQui Browser não conseguiu abrir <b>${E(url || 'a página')}</b> porque a rede virtual está desconectada.</p>

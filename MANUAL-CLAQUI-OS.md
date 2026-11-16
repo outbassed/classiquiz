@@ -1,4 +1,31 @@
-# Manual do ClaQui OS (ClassiQuiz 2.0.9)
+# Manual do ClaQui OS (ClassiQuiz 26nov16)
+
+## Novidades 26nov16 — guia rápido das telas novas
+
+### Versões e compilação
+A partir de 26nov16 as versões são **DDmmmAA[.N]**: `26nov16` é a primeira release de 16/11/2026, `26nov16.1` a segunda do mesmo dia, e assim por diante; em outro dia volta a não ter sufixo. A **compilação** (`DDMMAAAA.HHMMSS`) aparece em *Sobre*, *ClaQui Update* e na tela de boot. As datas de publicação/compilação são técnicas e **independentes** do relógio simulado do sistema. As versões antigas (2.0.9 etc.) permanecem no histórico.
+
+### ClaQui Browser
+Abra pelo atalho **ClaQui Browser** (canto superior esquerdo da área de trabalho), pelo Start › Internet ou por Mais opções. A barra de endereços aceita `www.buscaja.cqo`, `buscaja.cqo`, `http://…` e variações de maiúsculas; **só existem sites `.cqo`**, que vivem dentro do jogo (nada é acessado na internet real; não há iframes).
+- Endereço que não existe → **página 404** com o botão *Voltar ao BuscaJá!*. Nunca redireciona sozinho.
+- O campo de **pesquisa do BuscaJá!** procura por nome, descrição, palavras-chave e texto dos sites públicos; sem resultados mostra uma mensagem (não é erro 404). A página inicial mostra **dois destaques** e o botão azul **Mostrar mais** → `www.buscaja.cqo/internet`, o catálogo completo com filtro e categorias.
+- Controles: voltar/avançar (Alt+←/→), atualizar/parar (F5/Esc), início, ★ favoritos, 🕘 histórico, Ctrl+L foca o endereço. Favoritos e histórico ficam salvos neste navegador. Em *Configurações de Rede* há “Efeitos rápidos” para desligar a lentidão simulada.
+- Sites: BuscaJá!, ClaquiMail (caixa de entrada que guarda lida/excluída/enviadas), BatePapo (salas com robôs), Jogolândia (abre os minijogos e mostra seus recordes), Geocidades (livro de visitas), ClaquiPédia, Tempo Certo (muda com a data do relógio), BaixaTudo, Lojão CQ e Diário do Milharal. Alguns endereços **não estão listados** em lugar nenhum; quem explora acha.
+
+### Rede virtual e Configurações de Rede
+O ícone ao lado do relógio abre o painel da **rede do ClaQui OS** (Conectado/Desconectado, Conectar/Desconectar, atalho para as Configurações de Rede). É uma *internet fictícia*: desconectar só faz o navegador exibir a tela cinza de conexão perdida; o jogo, os minijogos e os sites internos continuam funcionando. A escolha persiste ao reiniciar. A **internet real** (ou a falta dela) não liga nem desliga a rede virtual; ela só é usada pelo ClaQui Update.
+
+### Offline Runner (segredo)
+Não aparece mais no Start nem em Mais opções. Para jogar: desconecte a rede virtual → abra o ClaQui Browser → toque no rostinho triste. **Celular:** toque na área de jogo para pular, deslize para baixo para abaixar, toque após perder para reiniciar. **PC:** Espaço/↑ pula, ↓ abaixa, P pausa. “⌨ Botões” mostra botões de acessibilidade. Recordes e conquistas (“Sem internet”, “Segredo desconectado”, etc.) são mantidos.
+
+### Data e Hora e o nome do sistema
+Clique no relógio (ou Start › Data e Hora). Modo *dispositivo* (padrão) espelha o aparelho; modo *manual* permite escolher dia, mês, ano (1601–9999), hora, minuto e segundo; o relógio continua **andando** a partir do valor escolhido (há opção explícita de congelar). Aba *Fuso horário e formato*: fuso fixo e 12/24 h. O nome visível do sistema usa os dois últimos dígitos do ano: 1999 → **ClaQui 99**, **2000 → ClaQui 2000**, 2003 → ClaQui 03, 2026 → ClaQui 26. Nada disso altera o relógio real do seu aparelho.
+
+### PWA offline e ClaQui Update
+Depois de abrir o jogo uma vez com internet, **o jogo inteiro funciona sem internet** (instale pelo navegador ou use direto). O *ClaQui Update* consulta a internet real, mostra versão e compilação, baixa a novidade em segundo plano com progresso verdadeiro e só reinicia quando você clicar em **Atualizar e reiniciar** (ou escolha **Depois**). Se houver Trilha ou minijogo aberto, ele pede confirmação. Saves, conquistas e preferências nunca são apagados; só os caches antigos de arquivos do aplicativo são removidos depois que a nova versão está ativa.
+
+### Tutorial, minijogos e touchpad
+*Start › Ajuda e Tutorial* (também em Mais opções e Sobre) repete o assistente “Primeiros passos”. Minijogos funcionam só com toque: Cobrinha (deslizar), Pong e Desvio CQ (arrastar), Jogo da Velha e Paciência (tocar; Paciência também arrasta), Campo Minado (tocar revela; **segurar** coloca/remove bandeira). Os botões de direção ficam ocultos em telas de toque (ative em *Botões na tela* ou em Configurações › Mouse). O **touchpad virtual** (Configurações › Mouse) tem 6 formatos, tamanho, posição (arraste a barra de título), opacidade, sensibilidade, aceleração, botões integrados ou em barra e perfis salvos.
 
 ## Novidades 2.0.9: touchpad, menus e PWA
 

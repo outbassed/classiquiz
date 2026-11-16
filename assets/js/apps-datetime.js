@@ -57,10 +57,10 @@ function apply(w) {
   if (d.manual) { const y = clamp(d.y, C.minYear, C.maxYear); C.setManual({y, mo: d.mo, d: d.d, H: d.H, M: d.M, S: d.S}, {frozen: d.frozen}); } else C.setDevice();
   w.data.dt = draftFromNow(C.isManual()); w.data.dt.dirty = false; CQ.notify('Data e hora aplicadas: ' + C.osName() + '.'); draw(w);
 }
-function draw(w) { w.body.innerHTML = view(w); live(w); }
+function draw(w) { if (w._drawing) return; w._drawing = true; try { w.body.innerHTML = view(w); } finally { w._drawing = false; } live(w); }   // trocar o HTML com um campo focado dispara 'change' ao sair do foco: o guarda evita redesenho aninhado
 function normalizeDraft(d) { d.y = clamp(d.y, C.minYear, C.maxYear); d.mo = clamp(d.mo, 0, 11); d.d = clamp(d.d, 1, C.daysIn(d.y, d.mo)); d.H = clamp(d.H, 0, 23); d.M = clamp(d.M, 0, 59); d.S = clamp(d.S, 0, 59); }
 function onInput(w, e, isChange) {
-  const k = e.target.dataset.dt; if (!k) return; const d = w.data.dt; let redraw = false;
+  if (w._drawing) return; const k = e.target.dataset.dt; if (!k) return; const d = w.data.dt; let redraw = false;
   const touch = () => { if (!d.manual) { d.manual = true; redraw = true; } d.dirty = true; };
   if (k === 'mode') { d.manual = e.target.value === 'manual'; d.dirty = true; if (!d.manual) Object.assign(d, {frozen: false}); const p = C.parts(); Object.assign(d, {y: p.y, mo: p.mo, d: p.d, H: p.H, M: p.M, S: p.S}); redraw = true; }
   else if (k === 'month') { touch(); d.mo = clamp(e.target.value, 0, 11); d.d = Math.min(d.d, C.daysIn(d.y, d.mo)); redraw = true; }

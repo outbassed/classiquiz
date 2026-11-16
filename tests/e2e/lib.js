@@ -17,7 +17,7 @@ exports.start = async function (opts = {}) {
   return {s, browser, ctx, page, errs, keepTutorial: !!opts.keepTutorial, url: `http://127.0.0.1:${s.port}/index.html`, close: async () => { await browser.close(); s.close(); }};
 };
 exports.boot = async function (t) {
-  await t.page.goto(t.url); await t.page.waitForFunction(() => window.CQ && CQ.os && CQ.game, null, {timeout: 20000});
+  if (!t.noGoto) await t.page.goto(t.url); await t.page.waitForFunction(() => window.CQ && CQ.os && CQ.game, null, {timeout: 20000});
   for (let k = 0; k < 200; k++) {
     const st = await t.page.evaluate(() => ({hidden: document.getElementById('power-layer').hidden, go: !!document.getElementById('welcome-go')}));
     if (st.go) await t.page.evaluate(() => document.getElementById('welcome-go')?.click());

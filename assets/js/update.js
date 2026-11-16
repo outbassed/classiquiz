@@ -34,8 +34,8 @@ U.init = async () => {
   if (!swOk) return;
   navigator.serviceWorker.addEventListener('message', e => {
     const d = e.data; if (!d || d.source !== 'cq-sw') return;
-    if (d.type === 'progress' && d.build !== CQ.BUILD) set({state: 'downloading', progress: {done: d.done, total: d.total}});
-    else if (d.type === 'error') { if (d.build !== CQ.BUILD) set({state: 'error', error: 'Falha ao preparar a atualização: ' + d.message + '. A versão atual continua intacta.', progress: null}); }
+    if (d.type === 'progress' && d.build !== CQ.BUILD) { if (U._failedBuild !== d.build) set({state: 'downloading', progress: {done: d.done, total: d.total}}); }
+    else if (d.type === 'error') { if (d.build !== CQ.BUILD) { U._failedBuild = d.build; set({state: 'error', error: 'Falha ao preparar a atualização: ' + d.message + '. A versão atual continua intacta.', progress: null}); } }
     else if (d.type === 'installed' && d.build === CQ.BUILD) set({offlineBuild: CQ.BUILD});
   });
   navigator.serviceWorker.addEventListener('controllerchange', () => { U.controlled = true; if (U._applying && !U._reloading) { U._reloading = true; location.reload(); } void refreshCacheInfo().then(emit); });
@@ -63,7 +63,7 @@ U.check = async ({silent = false} = {}) => {
     U.latest = data; U.checkedAt = Date.now();
     if (newer(data)) {
       if (U.reg && U.reg.waiting) set({state: 'ready'});
-      else { set({state: swOk && U.reg ? 'downloading' : 'available', progress: {done: 0, total: 0}}); if (swOk && U.reg) { try { await U.reg.update(); if (U.reg.waiting) set({state: 'ready', progress: null}); else if (!U.reg.installing) set({state: 'available'}); } catch (e) { set({state: 'error', error: 'Não foi possível baixar a nova versão agora. Tente novamente.'}); } } }
+      else { set({state: swOk && U.reg ? 'downloading' : 'available', progress: {done: 0, total: 0}}); if (swOk && U.reg) { try { await U.reg.update(); if (U.reg.waiting) set({state: 'ready', progress: null}); else if (!U.reg.installing && U.state !== 'error') set({state: 'available'}); } catch (e) { set({state: 'error', error: 'Não foi possível baixar a nova versão agora. Tente novamente.'}); } } }
       if (silent) CQ.notify('Nova versão disponível: ' + data.version + '. Abra o ClaQui Update.');
     } else set({state: 'uptodate'});
   } catch (err) { set({state: 'error', error: err.name === 'AbortError' ? 'O servidor demorou demais para responder.' : (err.message && !/fetch|network|load failed/i.test(err.message) ? err.message : 'Não foi possível consultar a internet real. Verifique a conexão e tente novamente.'), checkedAt: Date.now()}); }

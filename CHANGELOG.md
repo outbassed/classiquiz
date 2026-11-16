@@ -1,5 +1,37 @@
 # CHANGELOG — ClassiQuiz × ClaQui OS
 
+## 26nov16 — "ClaQui Browser, rede virtual e PWA 100% offline"
+> A partir desta release as versões seguem **DDmmmAA[.N]** (dia, mês em português, ano; `.1`, `.2`… a partir do 2º lançamento no mesmo dia) e há uma **compilação** `DDMMAAAA.HHMMSS`. `2.0.9` e as anteriores continuam no histórico, sem renomear. O número e a compilação são gerados por `node tools/build.js` na hora da publicação (America/Sao_Paulo, data real), nunca pelo relógio simulado do jogo.
+
+### Novidades
+- **ClaQui Browser** (`www.buscaja.cqo`): navegador fictício completo (voltar/avançar, atualizar/parar, início, favoritos, histórico, barra de endereços com variações de URL, carregamento simulado leve, atalho no desktop, Start e Mais opções). Roteador interno `.cqo`: nada é requisitado na internet e não há iframes. **10 sites públicos** de identidade própria (BuscaJá!, ClaquiMail, BatePapo, Jogolândia, Geocidades, ClaquiPédia, Tempo Certo, BaixaTudo, Lojão CQ, Diário do Milharal) e **3 secretos** (acessíveis só por endereço). Endereço inexistente → página **404** com “Voltar ao BuscaJá!”; pesquisa do BuscaJá! nunca dá 404 (resultados ou “nenhum resultado”); homepage com exatamente 2 destaques e “Mostrar mais” → `/internet` (catálogo completo com filtros). Todo texto digitado é escapado (XSS coberto por testes).
+- **Rede virtual**: ícone ao lado do relógio, painel (Conectado/Desconectado, Conectar/Desconectar, atalho) e janela **Configurações de Rede** (efeitos rápidos, conexão discada opcional com sons de modem, tráfego fictício, estado da internet real só informativo). Preferência persistente. Sem rede virtual, o navegador mostra a tela cinza de conexão perdida.
+- **Offline Runner agora é segredo**: removido do Iniciar, Mais opções e listas. Desconecte a rede virtual → abra o ClaQui Browser → toque no rostinho triste. Recordes e as 7 conquistas legados preservados (`classiquiz.v1.runner`).
+- **Runner reescrito** (celular e PC): usa toda a área da janela; toque pula, deslizar para baixo abaixa, toque após a derrota reinicia; botões virtuais só por opção. Pulo ~105 un. (antes ~68) e mais ágil, velocidade inicial 250 (antes 175) com aceleração progressiva, obstáculos bem mais afastados, simulação de passo fixo (mesmo resultado a 30/60/144 Hz), buffer de pulo, retrato/paisagem/redimensionamento sem reiniciar. Teclado continua.
+- **PWA 100% offline**: Service Worker com pré-cache de **todos** os arquivos (manifesto `asset-manifest.json` com tamanho e SHA-256, gerado pela ferramenta de build), cache por compilação, validação antes de ativar, limpeza dos caches antigos do ClassiQuiz (incl. `cq-offline-*`) somente depois da transição, nunca toca em saves/localStorage/IndexedDB. Falha no meio do download não apaga a versão que funciona.
+- **ClaQui Update real**: consulta `version.json` com `no-store`, compara versões (semântica legada e por data, incl. `.1`, `.2`) e compilações, baixa em segundo plano pelo Service Worker com **progresso verdadeiro**, mostra erros reais (sem internet real, servidor inválido…), oferece “Atualizar e reiniciar” / “Depois”, pede confirmação se há Trilha/minijogo aberto e nunca reinicia sozinho.
+- **Data e Hora** (clique no relógio): modo dispositivo (padrão) ou manual com calendário, ano de 1601 a 9999, hora/minuto/segundo, 12/24 h, fuso, opção explícita de congelar; o relógio manual **anda**. Nunca altera o relógio real nem as datas de publicação/compilação. O nome do sistema acompanha o ano (ClaQui 98, 99, **2000**, 01, 03, 26, 50…) no Iniciar, Sobre, boas-vindas, boot, tela azul, Update e título da página.
+- **Tutorial “Primeiros passos”** (8 etapas, Voltar/Avançar/Pular, progresso, “Não mostrar novamente”), aberto na 1ª inicialização e disponível em Start › Ajuda e Tutorial, Mais opções e Sobre. Quem já usava o jogo vê só uma mini apresentação das novidades (uma vez).
+- **Minijogos touch-first**: Cobrinha (deslizar em qualquer lugar da janela; toque pausa), Pong (arrastar), Desvio CQ (arrastar relativo), Jogo da Velha (toque), Campo Minado (segurar = bandeira; mover o dedo cancela; sem dupla marcação com o menu nativo), **Paciência** (novo; toque para selecionar/mover, toque de novo envia à fundação, arrastar, desfazer, completar, salvamento automático). Botões de direção ocultos por padrão em telas de toque (opção “Botões na tela”).
+- **Touchpad virtual customizável**: 6 formatos (clássico, arredondado, quadrado, circular, panorâmico, flutuante), largura/altura com limites, posição esquerda/centro/direita/arrastável, opacidade, sensibilidade, aceleração, botões integrados ou em barra, toque para clicar (opcional), clique direito, rolagem com dois dedos, segurar e arrastar, recolher e até 8 perfis salvos. Continua opcional e desativado por padrão.
+- **Conquistas novas**: Navegando na Rede, Surfista da Web, Endereço Escondido, Senha do Cofre, Paciência de Monge. Descrições do “Sem internet” e “Segredo desconectado” atualizadas para o novo caminho.
+
+### Correções e melhorias
+- Corrigida a ausência de offline real do jogo (antes só uma tela cinza). Corrigida a comparação de versões (`2.0.10` > `2.0.9`, `.10` > `.2`, data > legado).
+- Campo Minado: bandeira por toque longo não dispara mais ao rolar/arrastar e não é desfeita pelo evento `contextmenu` do Android.
+- Cobrinha: gesto de deslizar não funcionava em celulares porque o navegador rolava a página (`touch-action`); corrigido.
+- Barra do navegador compacta em celulares (360 px); tutorial e janelas sem corte lateral; ícone de imagem vazio do cursor do touchpad corrigido.
+- Tela azul, boot e boas-vindas usam o nome dinâmico do sistema. Calendário e Relógio seguem o relógio simulado.
+- Infra de testes E2E agora funciona com `playwright` ou `playwright-core` e com o Chromium do ambiente; o tutorial é dispensado automaticamente.
+
+### Compatibilidade
+- Nenhuma chave de dados foi renomeada nem apagada; bancos B1–B7, seeds, Trilhas, saves, conquistas e preferências legados intactos (357 seeds antigas e 630 seeds B7 verificadas). O B7 continua com a resposta só no menu de contexto.
+
+### Testes executados nesta release
+Ver `RELATORIO-TESTES.md`. Resumo: 13 suítes Node (incl. 4 novas) e 2 novas suítes E2E em Chromium real (mobile 360/390, tablets, desktop, offline real, atualização entre duas releases, falha no meio do download).
+
+---
+
 ## 2.0.9 — 16/11/2026 — "PWA e ClaQui OS completo"
 - **Janela cheia por padrão:** todos os programas abrem maximizados dentro do desktop e mantêm minimizar/restaurar/fechar. Confirmações e alertas não são janelas maximizadas.
 - **Responsividade:** tela final da Trilha compactada, resultados e seed acessíveis; botões "Tentar a mesma Trilha", "Menu" e "Copiar seed" visíveis em celulares. TTT e minijogos adaptados a alturas pequenas e paisagem; a barra de tarefas continua fixa.

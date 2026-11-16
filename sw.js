@@ -5,7 +5,7 @@
    • Depois de ativada, apenas o cache ativo sobra: caches antigos do ClassiQuiz (e o cq-offline-* legado) são apagados.
    • Só mexe em CacheStorage do próprio app. Nunca toca em localStorage, IndexedDB, saves, conquistas, seeds ou preferências.
    • version.json e asset-manifest.json nunca vêm do cache (o ClaQui Update consulta a rede real). */
-const BUILD = '16112026.110457'; // carimbado por tools/build.js
+const BUILD = '16112026.112028'; // carimbado por tools/build.js
 const PREFIX = 'classiquiz-cache-';
 const CACHE = PREFIX + BUILD;
 const LEGACY_PREFIXES = ['cq-offline-'];
@@ -21,25 +21,29 @@ async function precache() {
   const man = await res.json();
   if (man.build !== BUILD) throw new Error('asset-manifest.json (' + man.build + ') não corresponde a este Service Worker (' + BUILD + ')');
   await caches.delete(CACHE);                         // recomeça limpo: nunca reaproveita cache parcial de tentativa anterior
-  const cache = await caches.open(CACHE), files = man.files, total = files.length; let done = 0, next = 0;
+  const cache = await caches.open(CACHE), files = man.files, total = files.length; let done = 0, next = 0, failed = false;
   try {
+    let firstErr = null;
     const worker = async () => {
-      while (next < files.length) {
-        const f = files[next++], url = new URL(f.path, SCOPE).href;
-        const r = await fetch(url, {cache: 'reload'});
-        if (!r.ok) throw new Error('falha ao baixar ' + f.path + ' (' + r.status + ')');
-        const buf = await r.clone().arrayBuffer();
-        if (buf.byteLength !== f.size) throw new Error('tamanho inesperado em ' + f.path);
-        if (hex(await crypto.subtle.digest('SHA-256', buf)) !== f.sha256) throw new Error('arquivo corrompido: ' + f.path);
-        await cache.put(url, r);
-        if (f.path === 'index.html') await cache.put(new URL('./', SCOPE).href, new Response(buf, {headers: r.headers}));
-        say({type: 'progress', done: ++done, total});
-      }
+      try {
+        while (next < files.length && !failed) {          // após a 1ª falha, os demais downloads param (e não há mais progresso)
+          const f = files[next++], url = new URL(f.path, SCOPE).href;
+          const r = await fetch(url, {cache: 'reload'});
+          if (!r.ok) throw new Error('falha ao baixar ' + f.path + ' (' + r.status + ')');
+          const buf = await r.clone().arrayBuffer();
+          if (buf.byteLength !== f.size) throw new Error('tamanho inesperado em ' + f.path);
+          if (hex(await crypto.subtle.digest('SHA-256', buf)) !== f.sha256) throw new Error('arquivo corrompido: ' + f.path);
+          await cache.put(url, r);
+          if (f.path === 'index.html') await cache.put(new URL('./', SCOPE).href, new Response(buf, {headers: r.headers}));
+          if (!failed) say({type: 'progress', done: ++done, total});
+        }
+      } catch (e) { failed = true; firstErr = firstErr || e; }
     };
-    await Promise.all(Array.from({length: 6}, worker));
+    await Promise.all(Array.from({length: 6}, worker));     // espera TODOS terminarem antes de decidir (evita cache recriado por gravações em voo)
+    if (firstErr) throw firstErr;
     const stored = (await cache.keys()).length;
     if (stored < total) throw new Error('pré-cache incompleto (' + stored + '/' + total + ')');
-  } catch (err) { await caches.delete(CACHE); say({type: 'error', message: String(err && err.message || err)}); throw err; }
+  } catch (err) { failed = true; await caches.delete(CACHE); say({type: 'error', message: String(err && err.message || err)}); throw err; }
   say({type: 'installed', total});
   // Primeira instalação moderna (nenhum cache antigo): ativa direto. Havendo versão anterior, espera a decisão do jogador (ClaQui Update).
   const others = (await caches.keys()).filter(k => k.startsWith(PREFIX) && k !== CACHE);

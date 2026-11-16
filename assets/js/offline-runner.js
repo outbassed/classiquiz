@@ -114,7 +114,7 @@ function startGame(host, options = {}) {
     }
   }
   function updateUi() { const s = Math.floor(sim.st.score); pts.textContent = `Pontos: ${s} · Recorde: ${Math.max(recBest, s)}`; }
-  function visible() { return root.isConnected && root.offsetParent !== null && !document.hidden; }
+  function visible() { if (!root.isConnected || root.offsetParent === null || document.hidden) return false; const win = root.closest('.cq-win'); return !win || win.classList.contains('active'); }   // pausa em janela oculta, coberta por outra ou em aba de fundo
   function frame(ts) {
     if (!active) return; raf = requestAnimationFrame(frame);
     if (!visible() || paused) { last = 0; return; }                       // pausa sozinho em aba/janela oculta

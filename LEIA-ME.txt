@@ -1,3 +1,28 @@
+NOVIDADES DA 26nov16 (versão por data; compilação ver Sobre / ClaQui Update)
+
+- ClaQui Browser: navegador fictício com sites .cqo (BuscaJá!, ClaquiMail, BatePapo,
+  Jogolândia e mais). Barra de endereços abre o site ou mostra 404; pesquisa do BuscaJá!
+  nunca dá 404. Nada é acessado na internet real.
+- Rede virtual: ícone ao lado do relógio e janela Configurações de Rede. Sem rede virtual,
+  o navegador mostra a tela cinza de conexão perdida; o rostinho triste esconde o Offline Runner.
+- Offline Runner virou segredo (saiu do Iniciar/Mais opções) e foi refeito para celular e PC.
+- PWA 100% offline: depois de instalar/carregar uma vez com internet, TODO o jogo roda sem rede.
+  O ClaQui Update (internet real) baixa novas versões em segundo plano e só reinicia se você pedir.
+- Data e Hora (clique no relógio): modo dispositivo ou manual; o nome do sistema muda com o ano.
+- Tutorial "Primeiros passos" (Start > Ajuda e Tutorial).
+- Minijogos por toque (swipe/arrastar/segurar), nova Paciência e touchpad virtual customizável.
+
+IMPORTANTE SOBRE O PWA: a primeira abertura precisa de internet para baixar todos os arquivos
+(a janela ClaQui Update mostra "Instalado... sem internet"). Depois disso funciona em modo avião.
+Na edição local (.bat / file://), não há service worker: tudo já está na pasta, mas o ClaQui Update
+só informa que é uma edição local.
+
+PUBLICAÇÃO (para quem mantém o projeto): rode  node tools/build.js  imediatamente antes do deploy.
+Ele carimba version.json, assets/js/build-info.js, asset-manifest.json e sw.js com a versão por
+data (America/Sao_Paulo) e uma compilação única. Nunca edite esses arquivos à mão.
+
+==========================================================================
+
 NOVIDADES DA 2.0.9 (16/11/2026)
 
 - Janelas de aplicativos e minijogos abrem maximizadas, dentro do ClaQui OS.
