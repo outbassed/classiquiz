@@ -125,3 +125,4 @@
 #cq-touchpad[data-shape="panoramico"] .cq-touchpad-surface{height:min(var(--tp-h),110px)}
 #cq-touchpad[data-shape="flutuante"]{background:#c7c8ce99;border:2px solid #ffffffaa;border-radius:18px;box-shadow:0 3px 14px #0b274680;backdrop-filter:blur(2px)}#cq-touchpad[data-shape="flutuante"] .cq-touchpad-title{background:#22478bb0;border-radius:14px}#cq-touchpad[data-shape="flutuante"] .cq-touchpad-surface{border-radius:12px;background:repeating-linear-gradient(45deg,#dfe1e8cc 0 9px,#e9ebefcc 9px 18px)}
 .tp-set label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0;font-size:13px}.tp-set select,.tp-set input[type=text]{border:2px inset #fff;padding:6px;min-height:36px;background:#fff}.tp-set input[type=range]{flex:1 1 160px;min-width:120px}.tp-prof{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+@container app (max-width:460px){.browser-shortcut{font-size:10px}}@container app (max-width:350px){.browser-shortcut{font-size:9px}}

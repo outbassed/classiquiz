@@ -6,7 +6,7 @@
 const CQ = window.CQ, app = () => document.getElementById('app');
 const touchDevice = () => matchMedia('(pointer:coarse)').matches || /Android|iPad|iPhone|Mobile|Tablet/i.test(navigator.userAgent);
 const SHAPES = {classico: ['Clássico retangular', 220, 140], arredondado: ['Arredondado', 220, 140], quadrado: ['Quadrado', 170, 170], circular: ['Circular', 170, 170], panoramico: ['Panorâmico', 300, 96], flutuante: ['Flutuante', 190, 120]};
-const LIM = {w: [120, 340], h: [70, 260]};
+const LIM = {w: [120, 340], h: [70, 230]};
 const CFG_KEYS = ['touchpadShape', 'touchpadW', 'touchpadH', 'touchpadPosition', 'touchpadX', 'touchpadY', 'touchpadOpacity', 'touchpadSensitivity', 'touchpadAccel', 'touchpadTapClick', 'touchpadButtons'];
 let x = innerWidth * .48, y = innerHeight * .42, held = false, downTarget = null, lastHover = null, moved = false;
 const pointers = new Map();
@@ -33,7 +33,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function dims() {
   const sh = SHAPES[CQ.sys.get('touchpadShape')] || SHAPES.classico, W = app()?.clientWidth || innerWidth, H = app()?.clientHeight || innerHeight;
   let w = Number(CQ.sys.get('touchpadW')) || sh[1], h = Number(CQ.sys.get('touchpadH')) || sh[2];
-  w = clamp(w, LIM.w[0], Math.min(LIM.w[1], W - 16)); h = clamp(h, LIM.h[0], Math.min(LIM.h[1], Math.max(LIM.h[0], H * .45)));
+  w = clamp(w, LIM.w[0], Math.min(LIM.w[1], W - 16)); h = clamp(h, LIM.h[0], Math.min(LIM.h[1], Math.max(LIM.h[0], H * .28)));   // nunca ocupa mais que ~metade da tela com título e botões
   if (CQ.sys.get('touchpadShape') === 'circular' || CQ.sys.get('touchpadShape') === 'quadrado') h = w = Math.min(w, h || w) || w;
   return {w, h};
 }
@@ -54,7 +54,7 @@ function apply() {
 }
 // ---------- gestos na superfície ----------
 const panel = el.querySelector('[data-tp="surface"]'); panel.style.touchAction = 'none';
-panel.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return; e.preventDefault(); panel.setPointerCapture(e.pointerId); pointers.set(e.pointerId, {x: e.clientX, y: e.clientY, moved: false, at: Date.now()}); moved = false; });
+panel.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return; e.preventDefault(); try { panel.setPointerCapture(e.pointerId); } catch {} pointers.set(e.pointerId, {x: e.clientX, y: e.clientY, moved: false, at: Date.now()}); moved = false; });
 panel.addEventListener('pointermove', e => {
   const p = pointers.get(e.pointerId); if (!p) return; e.preventDefault(); const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY; if (Math.abs(dx) + Math.abs(dy) > 3) { p.moved = true; moved = true; }
   if (pointers.size > 1) { scrollUnder(-dy * 2); return; }
@@ -66,7 +66,7 @@ panel.addEventListener('pointerup', end); panel.addEventListener('pointercancel'
 el.addEventListener('click', e => { const btn = e.target.closest('[data-tp]'); if (!btn || btn === panel || btn.dataset.tp === 'handle') return; e.stopPropagation(); e.preventDefault(); const act = btn.dataset.tp; if (act === 'left') left(); if (act === 'right') right(); if (act === 'hold') toggleHold(); if (act === 'fold') { CQ.sys.set({touchpadFolded: !CQ.sys.get('touchpadFolded')}); } });
 // mover o touchpad: arrastar a barra de título (vira posição personalizada). Nunca sai da tela nem cobre a barra de tarefas.
 let mv = null; const handle = el.querySelector('[data-tp="handle"]'); handle.style.touchAction = 'none';
-handle.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; mv = {id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: el.offsetLeft, oy: el.offsetTop}; handle.setPointerCapture(e.pointerId); e.preventDefault(); });
+handle.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; mv = {id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: el.offsetLeft, oy: el.offsetTop}; try { handle.setPointerCapture(e.pointerId); } catch {} e.preventDefault(); });
 handle.addEventListener('pointermove', e => { if (!mv || e.pointerId !== mv.id) return; const s = CQ.os.scale(), A = app(), tb = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--taskbar-h')) || 52; const nx = clamp(mv.ox + (e.clientX - mv.sx) / s, 4, A.clientWidth - el.offsetWidth - 4), ny = clamp(mv.oy + (e.clientY - mv.sy) / s, 4, A.clientHeight - tb - el.offsetHeight - 4); el.style.left = nx + 'px'; el.style.top = ny + 'px'; mv.nx = nx; mv.ny = ny; });
 const mvEnd = e => { if (!mv || e.pointerId !== mv.id) return; const m = mv; mv = null; if (m.nx == null) return; const A = app(), tb = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--taskbar-h')) || 52; CQ.sys.set({touchpadPosition: 'custom', touchpadX: A.clientWidth - el.offsetWidth > 0 ? m.nx / (A.clientWidth - el.offsetWidth) : .5, touchpadY: A.clientHeight - tb - el.offsetHeight > 0 ? m.ny / (A.clientHeight - tb - el.offsetHeight) : 1}); };
 handle.addEventListener('pointerup', mvEnd); handle.addEventListener('pointercancel', mvEnd);
